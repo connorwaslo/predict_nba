@@ -2,7 +2,19 @@ import csv
 import pandas as pd
 import numpy as np
 
-# Todo: Probably going to have to load data as numpy arrays in order to best iterate through
+# CONSTS
+PLAYERS_PER_TEAM = 8  # Number of players to include per team per feature
+
+
+def labels():
+    file = 'data/game_stats.csv'
+    use_cols = ['GAME_ID', 'A_PTS', 'H_PTS']
+
+    data = pd.read_csv(file, header=0, usecols=use_cols)
+
+    data = data.values.tolist()
+    data.sort(key=lambda x: x[0])
+    return data
 
 
 def load_player_avgs():
@@ -11,7 +23,6 @@ def load_player_avgs():
                 'AVG_TRB', 'AVG_AST', 'AVG_STL', 'AVG_BLK', 'AVG_TOB', 'AVG_PF', 'AVG_PTS']
 
     data = pd.read_csv(file, header=0, usecols=use_cols)
-    print(data)
 
     return data
 
@@ -21,14 +32,16 @@ def build_player_map():
     data = np.array(load_player_avgs())
 
     for row in data:
-        name = row[0]
-        game_id = row[1]
-        # If the player already exists
-        if name in player_map.keys():
-            player_map[name][game_id] = row[2:].tolist()  # Use game_id as key to store data
-        else:
-            player_map[name] = {}
-            player_map[name][game_id] = row[2:].tolist()
+        # If a player did not play for whatever reason, don't include that game in their data
+        if True not in pd.isnull(row):
+            name = row[0]
+            game_id = row[1]
+            # If the player already exists
+            if name in player_map.keys():
+                player_map[name][game_id] = row[2:].tolist()  # Use game_id as key to store data
+            else:
+                player_map[name] = {}
+                player_map[name][game_id] = row[2:].tolist()
 
     return player_map
 
@@ -47,7 +60,8 @@ def build_game_map():
                 # Get team name
                 team = player_data[player][date][0]
                 if team in game_map[date].keys():
-                    game_map[date][team].append(player_data[player][date][1:])
+                    if len(game_map[date][team]) < PLAYERS_PER_TEAM:
+                        game_map[date][team].append(player_data[player][date][1:])
                 else:
                     game_map[date][team] = []
                     game_map[date][team].append(player_data[player][date][1:])
@@ -67,9 +81,20 @@ def raw_features():
     features = []
 
     for key in game_map.keys():
+        # print(key)
         game = [key]
+        temp = []
         for team in game_map[key].keys():
-            game.append(game_map[key][team])
+            # Check if this is the home team
+            if team in key:
+                temp = game_map[key][team]
+            else:
+                game.append(game_map[key][team])
+
+        # Add the home team stats to the end
+        if len(temp) > 0:
+            game.append(temp)
+
         features.append(game)
 
     return features
@@ -87,6 +112,7 @@ def load_games():
     return data
 
 
+# Todo: Create each game as two channels. One for home team another for the away team.
 def features():
     all_games = raw_features()
     full_list = []
@@ -105,4 +131,12 @@ def features():
 
         full_list.append(data)
 
+    full_list.sort(key=lambda x: x[0])  # Sort by GAME_ID
     return full_list
+
+
+features = features()
+labels = labels()
+
+for game, outcome in zip(features, labels):
+    print(outcome, game)
