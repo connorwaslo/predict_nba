@@ -3,7 +3,9 @@ import pandas as pd
 import numpy as np
 
 # CONSTS
-PLAYERS_PER_TEAM = 8  # Number of players to include per team per feature
+# Todo: Game 201904100POR only had seven players on one of the teams. So we set ppt to 7, find workaround later
+# Oh... well that's because portland only played 6 players that game. Still pulled out a W though.
+PLAYERS_PER_TEAM = 6  # Number of players to include per team per feature
 
 
 def labels():
@@ -14,6 +16,8 @@ def labels():
 
     data = data.values.tolist()
     data.sort(key=lambda x: x[0])
+    data = list(map(lambda x: x[1:], data))
+
     return data
 
 
@@ -73,6 +77,8 @@ def build_game_map():
                 game_map[date][team] = []
                 game_map[date][team].append(player_data[player][date][1:])
 
+    # print(len(game_map['201904100POR']['SAC']))
+    # print(len(game_map['201904100POR']['POR']))
     return game_map
 
 
@@ -132,11 +138,28 @@ def features():
         full_list.append(data)
 
     full_list.sort(key=lambda x: x[0])  # Sort by GAME_ID
+
+    print(full_list[1228])
+
+    full_list = list(map(lambda x: x[1:], full_list))  # Remove game_id column and pass this along as feature
+
     return full_list
 
 
-features = features()
-labels = labels()
+# Not useful as of right now...
+def features_dataframe():
+    feats = features()
+    labs = labels()
 
-for game, outcome in zip(features, labels):
-    print(outcome, game)
+    labs = list(map(lambda x: x[1:], labs))
+
+    all_feautures = []
+    for feat, lab in zip(feats, labs):
+        all_feautures.append(feat + lab)
+
+    # This doesn't actually work because too many columns
+    headers = ['GAME_ID', 'AVG_FG', 'AVG_FGA', 'AVG_3P', 'AVG_3PA', 'AVG_FT', 'AVG_FTA', 'AVG_ORB', 'AVG_DRB',
+                'AVG_TRB', 'AVG_AST', 'AVG_STL', 'AVG_BLK', 'AVG_TOB', 'AVG_PF', 'AVG_PTS', 'AWAY_POINTS', 'HOME_POINTS']
+    df = pd.DataFrame(data=all_feautures, columns=headers)
+
+    return df
