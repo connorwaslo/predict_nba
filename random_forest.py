@@ -1,8 +1,7 @@
 from data import features, labels
 from sklearn import metrics
-from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
-import pandas as pd
+from sklearn.ensemble import RandomForestRegressor
+import csv
 
 
 def k_folds_split(folds=10, iter=0, features=[], labels=[]):
@@ -62,6 +61,13 @@ for i in range(folds):
     # diff = [outcome[0] - pred[0], outcome[1] - pred[1]]
     # print(pred, outcome, diff)
 
-    print('Accuracy:', metrics.explained_variance_score(val_y, preds))
+    accuracy = metrics.explained_variance_score(val_y, preds)
+    print('Accuracy:', accuracy)
     print('****************')
+
+    file = 'Random Forest Regression 10 Folds No Rebounds.csv'
+    with open('result_tracking/' + file, 'a', newline='') as f:
+        writer = csv.writer(f)
+
+        writer.writerow([i, wins, int(games - wins), float(wins / games), a_wins, h_wins, accuracy])
 
