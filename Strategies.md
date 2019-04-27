@@ -11,3 +11,6 @@
     - Features within games will ultimately look the same, just including a playerid which hopefully the algo would learn affects outcomes.
         - This may require more data though so that we get many matchups
        
+# Brainstorming
+
+- Factor in how long a player has been with their team as a sort of +/- statistic

@@ -26,6 +26,9 @@ def load_player_avgs():
     use_cols = ['PLAYER', 'GAME_ID', 'TEAM', 'AVG_FG', 'AVG_FGA', 'AVG_3P', 'AVG_3PA', 'AVG_FT', 'AVG_FTA', 'AVG_ORB', 'AVG_DRB',
                 'AVG_TRB', 'AVG_AST', 'AVG_STL', 'AVG_BLK', 'AVG_TOB', 'AVG_PF', 'AVG_PTS']
 
+    # use_cols = ['PLAYER', 'GAME_ID', 'TEAM', 'AVG_FG', 'AVG_FGA', 'AVG_3P', 'AVG_3PA', 'AVG_FT', 'AVG_FTA',
+    #             'AVG_AST', 'AVG_STL', 'AVG_BLK', 'AVG_TOB', 'AVG_PTS']
+
     data = pd.read_csv(file, header=0, usecols=use_cols)
 
     return data
