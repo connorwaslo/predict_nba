@@ -27,7 +27,7 @@ folds = 10
 for i in range(folds):
     train_x, train_y, val_x, val_y = k_folds_split(iter=i, features=feats, labels=labs)
 
-    clf = RandomForestRegressor(n_estimators=1000)
+    clf = RandomForestRegressor(n_estimators=500)
 
     clf.fit(train_x, train_y)
 
@@ -65,7 +65,7 @@ for i in range(folds):
     print('Accuracy:', accuracy)
     print('****************')
 
-    file = 'Random Forest Regression 10 Folds No Rebounds 1000 Estimators.csv'
+    file = 'Random Forest Regression 10 Folds 4 Major Stats.csv'
     with open('result_tracking/' + file, 'a', newline='') as f:
         writer = csv.writer(f)
 
