@@ -142,8 +142,6 @@ def features():
 
     full_list.sort(key=lambda x: x[0])  # Sort by GAME_ID
 
-    print(full_list[1228])
-
     full_list = list(map(lambda x: x[1:], full_list))  # Remove game_id column and pass this along as feature
 
     return full_list
