@@ -21,14 +21,12 @@ def k_folds_split(folds=10, iter=0, features=[], labels=[]):
     return train_x, train_y, val_x, val_y
 
 
-for i in range(1):
+for i in range(10):
     train_x, train_y, val_x, val_y = k_folds_split(iter=i, features=features(), labels=labels())
 
     model = tf.keras.models.Sequential([
         tf.keras.layers.Flatten(input_shape=train_x[0].shape),
-        tf.keras.layers.Dense(512, activation=tf.nn.relu),
-        tf.keras.layers.Dropout(0.1),
-        tf.keras.layers.Dense(512, activation=tf.nn.relu),
+        tf.keras.layers.Dense(768, activation=tf.nn.relu),
         tf.keras.layers.Dropout(0.1),
         tf.keras.layers.Flatten(),
         tf.keras.layers.Dense(2)
@@ -43,8 +41,8 @@ for i in range(1):
     # Print model summary
     model.summary()
 
-    model.fit(train_x, train_y, epochs=10)
-    model.evaluate(val_x, val_y)
+    model.fit(train_x, train_y, epochs=50, verbose=1)
+    print(model.evaluate(val_x, val_y))
     predictions = model.predict(val_x)
 
     wins = 0
@@ -56,3 +54,9 @@ for i in range(1):
             wins += 1
 
     print(wins, int(len(predictions) - wins), float(wins / len(predictions)))
+
+    file = 'FFNN All Data.csv'
+    with open('result_tracking/Feed Forward/' + file, 'a', newline='') as f:
+        writer = csv.writer(f)
+
+        writer.writerow([i, wins, int(len(predictions) - wins), float(wins / len(predictions))])
