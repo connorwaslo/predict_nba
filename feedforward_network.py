@@ -21,12 +21,13 @@ def k_folds_split(folds=10, iter=0, features=[], labels=[]):
     return train_x, train_y, val_x, val_y
 
 
+accuracy = 0.0
 for i in range(10):
     train_x, train_y, val_x, val_y = k_folds_split(iter=i, features=features(), labels=labels())
 
     model = tf.keras.models.Sequential([
         tf.keras.layers.Flatten(input_shape=train_x[0].shape),
-        tf.keras.layers.Dense(768, activation=tf.nn.relu),
+        tf.keras.layers.Dense(512, activation=tf.nn.relu),
         tf.keras.layers.Dropout(0.1),
         tf.keras.layers.Flatten(),
         tf.keras.layers.Dense(2)
@@ -55,7 +56,7 @@ for i in range(10):
 
     print(wins, int(len(predictions) - wins), float(wins / len(predictions)))
 
-    file = 'FFNN 4 Major Stats.csv'
+    file = 'FFNN All Stats.csv'
     with open('result_tracking/Feed Forward/' + file, 'a', newline='') as f:
         writer = csv.writer(f)
 
