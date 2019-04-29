@@ -37,12 +37,12 @@ def classifier_labels():
 def load_player_avgs():
     file = 'data/player_avgs.csv'
     # All Stats
-    # use_cols = ['PLAYER', 'GAME_ID', 'TEAM', 'AVG_FG', 'AVG_FGA', 'AVG_3P', 'AVG_3PA', 'AVG_FT', 'AVG_FTA', 'AVG_ORB', 'AVG_DRB',
-    #             'AVG_TRB', 'AVG_AST', 'AVG_STL', 'AVG_BLK', 'AVG_TOB', 'AVG_PF', 'AVG_PTS']
+    use_cols = ['PLAYER', 'GAME_ID', 'TEAM', 'AVG_FG', 'AVG_FGA', 'AVG_3P', 'AVG_3PA', 'AVG_FT', 'AVG_FTA', 'AVG_ORB', 'AVG_DRB',
+                'AVG_TRB', 'AVG_AST', 'AVG_STL', 'AVG_BLK', 'AVG_TOB', 'AVG_PF', 'AVG_PTS']
 
     # No Rebounds
-    use_cols = ['PLAYER', 'GAME_ID', 'TEAM', 'AVG_FG', 'AVG_FGA', 'AVG_3P', 'AVG_3PA', 'AVG_FT', 'AVG_FTA',
-                'AVG_AST', 'AVG_STL', 'AVG_BLK', 'AVG_TOB', 'AVG_PTS']
+    # use_cols = ['PLAYER', 'GAME_ID', 'TEAM', 'AVG_FG', 'AVG_FGA', 'AVG_3P', 'AVG_3PA', 'AVG_FT', 'AVG_FTA',
+    #             'AVG_AST', 'AVG_STL', 'AVG_BLK', 'AVG_TOB', 'AVG_PTS']
 
     # 4 Major Stats
     # use_cols = ['PLAYER', 'GAME_ID', 'TEAM', 'AVG_AST', 'AVG_STL', 'AVG_BLK', 'AVG_PTS']

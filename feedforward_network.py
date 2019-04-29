@@ -41,7 +41,7 @@ for i in range(10):
     # Print model summary
     model.summary()
 
-    model.fit(train_x, train_y, epochs=50, verbose=1)
+    history = model.fit(train_x, train_y, epochs=50, verbose=1)
     print(model.evaluate(val_x, val_y))
     predictions = model.predict(val_x)
 
@@ -55,7 +55,7 @@ for i in range(10):
 
     print(wins, int(len(predictions) - wins), float(wins / len(predictions)))
 
-    file = 'FFNN All Data.csv'
+    file = 'FFNN 4 Major Stats.csv'
     with open('result_tracking/Feed Forward/' + file, 'a', newline='') as f:
         writer = csv.writer(f)
 
