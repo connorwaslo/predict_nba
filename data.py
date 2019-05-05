@@ -8,13 +8,25 @@ import numpy as np
 PLAYERS_PER_TEAM = 6  # Number of players to include per team per feature
 
 
+def odds(file='data/game_stats_2017-18.csv'):
+    use_cols = ['GAME_ID', 'AWAY_ML', 'HOME_ML', 'SPREAD', 'TOTAL_POINTS']
+
+    data = pd.read_csv(file, header=0, usecols=use_cols)
+
+    data = data.values.tolist()
+    # data.sort(key=lambda x: x[0])
+    data = list(map(lambda x: x[1:], data))
+
+    return data
+
+
 def labels(file='data/game_stats.csv'):
     use_cols = ['GAME_ID', 'A_PTS', 'H_PTS']
 
     data = pd.read_csv(file, header=0, usecols=use_cols)
 
     data = data.values.tolist()
-    data.sort(key=lambda x: x[0])
+    # data.sort(key=lambda x: x[0])
     data = list(map(lambda x: x[1:], data))
 
     return data
