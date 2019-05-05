@@ -1,7 +1,7 @@
 import tensorflow as tf
 import numpy as np
 import csv
-from data import features, labels, test_features, test_labels
+from data import features, labels, classifier_labels, test_features, test_labels
 
 
 def loss(y_true, y_pred):
@@ -37,7 +37,7 @@ for i in range(1):
 
     model.compile(loss='mean_squared_error',
                   optimizer=optimizer,
-                  metrics=['mean_absolute_error', 'mean_squared_error'])
+                  metrics=['mean_squared_error'])
 
     # Print model summary
     model.summary()
@@ -47,17 +47,23 @@ for i in range(1):
     early_stop = tf.keras.callbacks.EarlyStopping(min_delta=0.01, restore_best_weights=True)
     csv_log = tf.keras.callbacks.CSVLogger('result_tracking/Feed Forward/No Rebounds.csv')
 
-    test_x, test_y = np.array(test_features()), np.array(test_labels())
-    print(test_x[0].shape, train_x[0].shape)
+    # test_x, test_y = np.array(test_features()), np.array(test_labels())
+    # print(test_x[0].shape, train_x[0].shape)
 
-    history = model.fit(train_x, train_y, epochs=300, verbose=1, callbacks=[early_stop, csv_log])
+    history = model.fit(train_x, train_y, epochs=200, verbose=1, callbacks=[early_stop, csv_log])
     print(model.evaluate(val_x, val_y))
 
-    predictions = model.predict(test_x)
+    # predictions = model.predict(test_x)
+    predictions = model.predict(val_x)
 
     wins = 0
-    for pred, actual in zip(predictions, test_y):
-        print(pred, actual, [actual[0] - pred[0], actual[1] - pred[1]])
+    for pred, actual in zip(predictions, val_y):
+        # Logic for classifying wins and losses
+
+        # Logic for predicting scores
+        pred_spread = int(pred[1] - pred[0])
+        actual_spread = int(actual[1] - actual[0])
+        print(pred, actual, [actual[0] - pred[0], actual[1] - pred[1]], pred_spread, actual_spread, actual_spread - pred_spread)
         if pred[0] > pred[1] and actual[0] > actual[1]:
             wins += 1
         elif pred[0] < pred[1] and actual[0] < actual[1]:
