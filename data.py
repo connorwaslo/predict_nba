@@ -8,7 +8,7 @@ import numpy as np
 PLAYERS_PER_TEAM = 6  # Number of players to include per team per feature
 
 
-def odds(file='data/odds/odds17-18.csv'):
+def odds(file='data/odds/odds18-19.csv'):
     use_cols = ['GAME_ID', 'AWAY_ML', 'HOME_ML', 'SPREAD', 'TOTAL_POINTS']
 
     data = pd.read_csv(file, header=0, usecols=use_cols)
@@ -20,7 +20,7 @@ def odds(file='data/odds/odds17-18.csv'):
     return data
 
 
-def labels(file='data/game_stats.csv'):
+def labels(file='data/game_stats_2017-18.csv'):
     use_cols = ['GAME_ID', 'A_PTS', 'H_PTS']
 
     data = pd.read_csv(file, header=0, usecols=use_cols)
@@ -45,7 +45,7 @@ def classifier_labels():
     return data
 
 
-def load_player_avgs(file='data/player_avgs.csv'):
+def load_player_avgs(file='data/player_avgs_2017-18.csv'):
     # All Stats
     # use_cols = ['PLAYER', 'GAME_ID', 'TEAM', 'AVG_FG', 'AVG_FGA', 'AVG_3P', 'AVG_3PA', 'AVG_FT', 'AVG_FTA', 'AVG_ORB', 'AVG_DRB',
     #             'AVG_TRB', 'AVG_AST', 'AVG_STL', 'AVG_BLK', 'AVG_TOB', 'AVG_PF', 'AVG_PTS']
@@ -62,7 +62,7 @@ def load_player_avgs(file='data/player_avgs.csv'):
     return data
 
 
-def build_player_map(file='data/player_avgs.csv'):
+def build_player_map(file='data/player_avgs_2017-18.csv'):
     player_map = {}
     data = np.array(load_player_avgs(file))
 
@@ -81,7 +81,7 @@ def build_player_map(file='data/player_avgs.csv'):
     return player_map
 
 
-def build_game_map(game_file='data/game_stats.csv', player_file='data/player_avgs.csv'):
+def build_game_map(game_file='data/game_stats_2017-18.csv', player_file='data/player_avgs_2017-18.csv'):
     game_map = {}
     game_data = load_games(game_file)
     player_data = build_player_map(player_file)
@@ -113,7 +113,7 @@ def build_game_map(game_file='data/game_stats.csv', player_file='data/player_avg
     return game_map
 
 
-def raw_features(game_file='data/game_stats.csv', player_file='data/player_avgs.csv'):
+def raw_features(game_file='data/game_stats_2017-18.csv', player_file='data/player_avgs_2017-18.csv'):
     game_map = build_game_map(game_file, player_file)
     features = []
 
@@ -137,7 +137,7 @@ def raw_features(game_file='data/game_stats.csv', player_file='data/player_avgs.
     return features
 
 
-def load_games(file='data/game_stats.csv'):
+def load_games(file='data/game_stats_2017-18.csv'):
     use_cols = ['GAME_ID', 'AWAY_TEAM', 'A_AST', 'A_STL', 'A_BLK', 'A_TOB', 'A_PTS',
                 'HOME_TEAM', 'H_AST', 'H_STL', 'H_BLK', 'H_TOB', 'H_PTS']
 
@@ -147,7 +147,7 @@ def load_games(file='data/game_stats.csv'):
 
 
 # Todo: Create each game as two channels. One for home team another for the away team.
-def features(game_file='data/game_stats.csv', player_file='data/player_avgs.csv'):
+def features(game_file='data/game_stats_2017-18.csv', player_file='data/player_avgs_2017-18.csv'):
     all_games = raw_features(game_file, player_file)
     full_list = []
     for game in all_games:
@@ -192,9 +192,9 @@ def features_dataframe():
 
 
 def test_features():
-    return features(game_file='data/game_stats_2017-18.csv', player_file='data/player_avgs_2017-18.csv')
+    return features(game_file='data/game_stats.csv', player_file='data/player_avgs.csv')
 
 
 def test_labels():
-    return labels(file='data/game_stats_2017-18.csv')
+    return labels(file='data/game_stats.csv')
 
