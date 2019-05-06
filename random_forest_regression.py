@@ -1,4 +1,4 @@
-from data import features, labels, odds, test_features, test_labels
+from data import features, labels, odds, test_features, test_labels, features_2016_19, labels_2016_19
 from sklearn import metrics
 from sklearn.ensemble import RandomForestRegressor
 from betting import moneyline_profit
@@ -29,10 +29,13 @@ def k_folds_split(folds=10, iter=0, features=[], labels=[], odds=[]):
 # folds = 10
 
 for i in range(1):
+    features = features_2016_19()
+    labels = labels_2016_19()
+
     # train_x, train_y, val_x, val_y, odds = k_folds_split(iter=i, features=feats, labels=labs, odds=odds)
-    train_x, train_y = features() + test_features()[:900], labels() + test_labels()[:900]
-    val_x, val_y = test_features()[900:], test_labels()[900:]
-    odds = odds()
+    train_x, train_y = features[:-200], labels[:-200]
+    val_x, val_y = features[-200:], labels[-200:]
+    # odds = odds()
 
     clf = RandomForestRegressor(n_estimators=500)
 
@@ -48,22 +51,22 @@ for i in range(1):
     ml_profit = 0.0
     ml_bets = 0
 
-    for pred, outcome, game_odds in zip(preds, val_y, odds):
+    for pred, outcome in zip(preds, val_y):
         if outcome[0] > outcome[1]:
             a_wins += 1
         else:
             h_wins += 1
 
         if pred[0] > pred[1] and outcome[0] > outcome[1]:
-            ml_profit += moneyline_profit(pred_winner=1, away_ml=game_odds[0], home_ml=game_odds[1])
-            ml_bets += 10
+            # ml_profit += moneyline_profit(pred_winner=1, away_ml=game_odds[0], home_ml=game_odds[1])
+            # ml_bets += 10
             wins += 1
         elif pred[1] > pred[0] and outcome[1] > outcome[0]:
-            ml_profit += moneyline_profit(pred_winner=0, away_ml=game_odds[0], home_ml=game_odds[1])
-            ml_bets += 10
+            # ml_profit += moneyline_profit(pred_winner=0, away_ml=game_odds[0], home_ml=game_odds[1])
+            # ml_bets += 10
             wins += 1
-        else:
-            ml_profit -= 10
+        # else:
+        #     ml_profit -= 10
 
         games += 1
 
@@ -72,7 +75,7 @@ for i in range(1):
     print('Losses:', int(games - wins))
     print('%:', float(wins / games))
 
-    print('Moneyline profit:', ml_profit, ml_bets, float(ml_profit / ml_bets))
+    # print('Moneyline profit:', ml_profit, ml_bets, float(ml_profit / ml_bets))
 
     print('Away Wins:', a_wins)
     print('Home Wins:', h_wins)
@@ -84,7 +87,7 @@ for i in range(1):
     print('Accuracy:', accuracy)
     print('****************')
 
-    file = 'Random Forest Regression 10 Folds 4 Major Stats.csv'
+    file = 'Random Forest Regression 2016-19 200 testing.csv'
     with open('result_tracking/' + file, 'a', newline='') as f:
         writer = csv.writer(f)
 

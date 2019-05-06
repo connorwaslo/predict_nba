@@ -191,6 +191,26 @@ def features_dataframe():
     return df
 
 
+def features_2016_19():
+    a = features('data/game_stats_2016-17.csv', 'data/player_avgs_2016-17.csv')
+    print('Features 1/3')
+    b = features('data/game_stats_2017-18.csv', 'data/player_avgs_2017-18.csv')
+    print('Features 2/3')
+    c = features('data/game_stats.csv', 'data/player_avgs.csv')
+    print('Features 3/3')
+    return a + b + c
+
+
+def labels_2016_19():
+    a = labels('data/game_stats_2016-17.csv')
+    print('Labels 1/3')
+    b = labels('data/game_stats_2017-18.csv')
+    print('Labels 2/3')
+    c = labels('data/game_stats.csv')
+    print('Labels 3/3')
+    return a + b + c
+
+
 def test_features():
     return features(game_file='data/game_stats.csv', player_file='data/player_avgs.csv')
 
