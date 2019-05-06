@@ -39,7 +39,7 @@ for i in range(1):
 
     optimizer = tf.keras.optimizers.RMSprop(0.001)
 
-    model.compile(loss='mean_squared_error',
+    model.compile(loss=loss,
                   optimizer=optimizer,
                   metrics=['mean_squared_error'])
 
