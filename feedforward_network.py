@@ -66,6 +66,8 @@ for i in range(1):
     total_bet = 0
     total_pts_bet = 0
 
+    total_pts_correct = 0
+
     for pred, actual, odds in zip(predictions, test_y, game_odds):
         # Logic for predicting scores
         pred_spread = int(pred[1] - pred[0])
@@ -74,8 +76,10 @@ for i in range(1):
         if odds[3] != 'pk':
             if int(pred[1] + pred[0]) > float(odds[3]) and int(actual[1] + actual[0]) > float(odds[3]):
                 total_pts_profit += totals_profit()
+                total_pts_correct += 1
             elif int(pred[1] + pred[0]) < float(odds[3]) and int(actual[1] + actual[0]) < float(odds[3]):
                 total_pts_profit += totals_profit()
+                total_pts_correct += 1
             else:
                 total_pts_profit -= BET_SIZE
 
@@ -95,6 +99,7 @@ for i in range(1):
     print(wins, int(len(predictions) - wins), float(wins / len(predictions)))
     print('Moneyline:', ml_profit, total_bet, float(ml_profit / total_bet))
     print('Total Points:', total_pts_profit, total_pts_bet, float(total_pts_profit / total_pts_bet))
+    print('Total Points Predicted Correctly:', total_pts_correct, int(total_pts_bet / 10), float(total_pts_correct / int(total_pts_bet / 10)))
 
     # file = 'FFNN No Rebounds 18 Season.csv'
     # with open('result_tracking/Feed Forward/' + file, 'a', newline='') as f:
