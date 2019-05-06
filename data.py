@@ -8,7 +8,7 @@ import numpy as np
 PLAYERS_PER_TEAM = 6  # Number of players to include per team per feature
 
 
-def odds(file='data/game_stats_2017-18.csv'):
+def odds(file='data/odds/odds17-18.csv'):
     use_cols = ['GAME_ID', 'AWAY_ML', 'HOME_ML', 'SPREAD', 'TOTAL_POINTS']
 
     data = pd.read_csv(file, header=0, usecols=use_cols)
@@ -192,7 +192,7 @@ def features_dataframe():
 
 
 def test_features():
-    return features(game_file='data/game_stats_2017-18.csv', player_file='data/player_stats_2017-18_season_avgs.csv')
+    return features(game_file='data/game_stats_2017-18.csv', player_file='data/player_avgs_2017-18.csv')
 
 
 def test_labels():

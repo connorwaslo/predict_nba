@@ -26,6 +26,9 @@ accuracy = 0.0
 for i in range(1):
     train_x, train_y, val_x, val_y = k_folds_split(iter=i, features=features(), labels=labels())
 
+    print(len(features()), len(labels()))
+    print(len(test_features()), len(test_labels()))
+
     model = tf.keras.models.Sequential([
         tf.keras.layers.Flatten(input_shape=train_x[0].shape),
         tf.keras.layers.Dense(512, activation=tf.nn.relu),
