@@ -109,7 +109,7 @@ for i in range(10):
     # print('Total Points:', total_pts_profit, total_pts_bet, float(total_pts_profit / total_pts_bet))
     # print('Total Points Predicted Correctly:', total_pts_correct, int(total_pts_bet / 10), float(total_pts_correct / int(total_pts_bet / 10)))
 
-    file = 'FFNN PTS TOB Only 16-19 seasons.csv'
+    file = 'FFNN FG 3P FT Only 16-19 seasons.csv'
     with open('result_tracking/Feed Forward/' + file, 'a', newline='') as f:
         writer = csv.writer(f)
 

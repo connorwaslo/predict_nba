@@ -58,7 +58,10 @@ def load_player_avgs(file='data/player_avgs_2017-18.csv'):
     # use_cols = ['PLAYER', 'GAME_ID', 'TEAM', 'AVG_FG', 'AVG_3P']
 
     # Points and turnovers
-    use_cols = ['PLAYER', 'GAME_ID', 'TEAM', 'AVG_PTS', 'AVG_TOB']
+    # use_cols = ['PLAYER', 'GAME_ID', 'TEAM', 'AVG_PTS', 'AVG_TOB']
+
+    # Shooting stats
+    use_cols = ['PLAYER', 'GAME_ID', 'TEAM', 'AVG_FG', 'AVG_3P', 'AVG_FT']
 
     # 4 Major Stats
     # use_cols = ['PLAYER', 'GAME_ID', 'TEAM', 'AVG_AST', 'AVG_STL', 'AVG_BLK', 'AVG_PTS']
