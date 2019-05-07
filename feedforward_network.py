@@ -23,7 +23,9 @@ def k_folds_split(folds=10, iter=0, features=[], labels=[]):
 
 
 accuracy = 0.0
-for i in range(1):
+# Todo: k-folds test on this
+# Todo: Try different data after doing k-folds and see what works best
+for i in range(10):
     # train_x, train_y, val_x, val_y = k_folds_split(iter=i, features=features(), labels=labels())
     train_x, train_y = np.array(features_2016_19()[:-369]), np.array(labels_2016_19()[:-369])
 
@@ -107,8 +109,8 @@ for i in range(1):
     # print('Total Points:', total_pts_profit, total_pts_bet, float(total_pts_profit / total_pts_bet))
     # print('Total Points Predicted Correctly:', total_pts_correct, int(total_pts_bet / 10), float(total_pts_correct / int(total_pts_bet / 10)))
 
-    # file = 'FFNN No Rebounds 18 Season.csv'
-    # with open('result_tracking/Feed Forward/' + file, 'a', newline='') as f:
-    #     writer = csv.writer(f)
-    #
-    #     writer.writerow([i, wins, int(len(predictions) - wins), float(wins / len(predictions))])
+    file = 'FFNN PTS TOB Only 16-19 seasons.csv'
+    with open('result_tracking/Feed Forward/' + file, 'a', newline='') as f:
+        writer = csv.writer(f)
+
+        writer.writerow([i, wins, int(len(predictions) - wins), float(wins / len(predictions))])
