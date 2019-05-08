@@ -181,6 +181,32 @@ def features(game_file='data/game_stats_2017-18.csv', player_file='data/player_a
     return full_list
 
 
+def game_avg_features(data='data/game_avgs.csv'):
+    use_cols = ['GAME_ID', 'A_FG', 'A_3P', 'A_FT', 'H_FG', 'H_3P', 'H_FT']
+
+    data = np.array(pd.read_csv(data, header=0, usecols=use_cols)).tolist()
+
+    data.sort(key=lambda x: x[0])  # Sort by GAME_ID
+
+    data = list(map(lambda x: x[1:], data))  #
+
+    # print(np.array(data))
+    return np.array(data)
+
+
+def game_avg_labels(data='data/game_avgs.csv'):
+    use_cols = ['GAME_ID', 'AWAY_POINTS', 'HOME_POINTS']
+
+    data = np.array(pd.read_csv(data, header=0, usecols=use_cols)).tolist()
+
+    data.sort(key=lambda x: x[0])  # Sort by GAME_ID
+
+    data = list(map(lambda x: x[1:], data))  #
+
+    print(np.array(data))
+    return np.array(data)
+
+
 # Not useful as of right now...
 def features_dataframe():
     feats = features()

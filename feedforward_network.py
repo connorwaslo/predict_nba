@@ -1,7 +1,7 @@
 import tensorflow as tf
 import numpy as np
 import csv
-from data import features, labels, odds, classifier_labels, test_features, test_labels, features_2016_19, labels_2016_19
+from data import features, labels, odds, classifier_labels, test_features, test_labels, features_2016_19, labels_2016_19, game_avg_features, game_avg_labels
 from betting import spread_profit, moneyline_profit, totals_profit
 
 
