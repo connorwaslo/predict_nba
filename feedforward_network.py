@@ -26,11 +26,8 @@ accuracy = 0.0
 # Todo: k-folds test on this
 # Todo: Try different data after doing k-folds and see what works best
 for i in range(10):
-    # train_x, train_y, val_x, val_y = k_folds_split(iter=i, features=features(), labels=labels())
-    train_x, train_y = np.array(features_2016_19()[:-369]), np.array(labels_2016_19()[:-369])
-
-    print(len(features()), len(labels()))
-    print(len(test_features()), len(test_labels()))
+    train_x, train_y, test_x, test_y = k_folds_split(iter=i, features=features_2016_19(), labels=labels_2016_19())
+    # train_x, train_y = np.array(features_2016_19()[:-369]), np.array(labels_2016_19()[:-369])
 
     model = tf.keras.models.Sequential([
         tf.keras.layers.Flatten(input_shape=train_x[0].shape),
@@ -56,8 +53,6 @@ for i in range(10):
 
     # test_x, test_y = np.array(test_features()), np.array(test_labels())
     # print(test_x[0].shape, train_x[0].shape)
-
-    test_x, test_y = np.array(features_2016_19()[-369:]), np.array(labels_2016_19()[-369:])
 
     history = model.fit(train_x, train_y, epochs=200, verbose=1, callbacks=[early_stop, csv_log])
     # print(model.evaluate(val_x, val_y))
@@ -109,7 +104,7 @@ for i in range(10):
     # print('Total Points:', total_pts_profit, total_pts_bet, float(total_pts_profit / total_pts_bet))
     # print('Total Points Predicted Correctly:', total_pts_correct, int(total_pts_bet / 10), float(total_pts_correct / int(total_pts_bet / 10)))
 
-    file = 'FFNN FG 3P FT Only 16-19 seasons.csv'
+    file = 'FFNN FG 3P FT Only 16-19 seasons - 10 Folds.csv'
     with open('result_tracking/Feed Forward/' + file, 'a', newline='') as f:
         writer = csv.writer(f)
 
