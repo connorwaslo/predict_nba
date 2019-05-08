@@ -191,7 +191,7 @@ def game_avg_features(data='data/game_avgs.csv'):
     data = list(map(lambda x: x[1:], data))  #
 
     # print(np.array(data))
-    return np.array(data)
+    return data
 
 
 def game_avg_labels(data='data/game_avgs.csv'):
@@ -204,7 +204,7 @@ def game_avg_labels(data='data/game_avgs.csv'):
     data = list(map(lambda x: x[1:], data))  #
 
     print(np.array(data))
-    return np.array(data)
+    return data
 
 
 # Not useful as of right now...
