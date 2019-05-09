@@ -181,7 +181,7 @@ def features(game_file='data/game_stats_2017-18.csv', player_file='data/player_a
     return full_list
 
 
-def game_avg_features(data='data/game_avgs.csv'):
+def game_avg_features_part(data='data/game_avgs_2018-19.csv'):
     use_cols = ['GAME_ID', 'A_FG', 'A_3P', 'A_FT', 'H_FG', 'H_3P', 'H_FT']
 
     data = np.array(pd.read_csv(data, header=0, usecols=use_cols)).tolist()
@@ -194,7 +194,16 @@ def game_avg_features(data='data/game_avgs.csv'):
     return data
 
 
-def game_avg_labels(data='data/game_avgs.csv'):
+def game_avg_features():
+    features = []
+    years = ['2016-17', '2017-18', '2018-19']
+    for year in years:
+        features += game_avg_features_part('data/game_avgs_' + year + '.csv')
+
+    return features
+
+
+def game_avg_labels_part(data='data/game_avgs_2018-19.csv'):
     use_cols = ['GAME_ID', 'AWAY_POINTS', 'HOME_POINTS']
 
     data = np.array(pd.read_csv(data, header=0, usecols=use_cols)).tolist()
@@ -205,6 +214,15 @@ def game_avg_labels(data='data/game_avgs.csv'):
 
     print(np.array(data))
     return data
+
+
+def game_avg_labels():
+    labels = []
+    years = ['2016-17', '2017-18', '2018-19']
+    for year in years:
+        labels += game_avg_labels_part('data/game_avgs_' + year + '.csv')
+
+    return labels
 
 
 # Not useful as of right now...

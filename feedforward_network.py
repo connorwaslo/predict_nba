@@ -61,7 +61,8 @@ for runs in range(10):
 
         predictions = model.predict(test_x)
         # predictions = model.predict(val_x)
-        # game_odds = odds()
+        odds_start = i * len(test_x)
+        game_odds = odds()[odds_start:odds_start + len(test_x)]
 
         wins = 0
         BET_SIZE = 10.00
@@ -73,41 +74,49 @@ for runs in range(10):
 
         total_pts_correct = 0
 
-        for pred, actual in zip(predictions, test_y):
+        for pred, actual, betting_odds in zip(predictions, test_y, game_odds):
             # Logic for predicting scores
-            pred_spread = int(pred[1] - pred[0])
+            pred_spread = int(pred[1] - pred[0] + 0.5)
             actual_spread = int(actual[1] - actual[0])
 
-            # if odds[3] != 'pk':
-            #     if int(pred[1] + pred[0]) > float(odds[3]) and int(actual[1] + actual[0]) > float(odds[3]):
-            #         total_pts_profit += totals_profit()
-            #         total_pts_correct += 1
-            #     elif int(pred[1] + pred[0]) < float(odds[3]) and int(actual[1] + actual[0]) < float(odds[3]):
-            #         total_pts_profit += totals_profit()
-            #         total_pts_correct += 1
-            #     else:
-            #         total_pts_profit -= BET_SIZE
-            #
-            #     total_pts_bet += BET_SIZE
+            if betting_odds[3] != 'pk':
+                if int(pred[1] + pred[0]) > float(betting_odds[3]) and int(actual[1] + actual[0]) > float(betting_odds[3]):
+                    total_pts_profit += totals_profit()
+                    total_pts_correct += 1
+                elif int(pred[1] + pred[0]) < float(betting_odds[3]) and int(actual[1] + actual[0]) < float(betting_odds[3]):
+                    total_pts_profit += totals_profit()
+                    total_pts_correct += 1
+                else:
+                    total_pts_profit -= BET_SIZE
+
+                total_pts_bet += BET_SIZE
 
             print(pred, actual, [actual[0] - pred[0], actual[1] - pred[1]], pred_spread, actual_spread, actual_spread - pred_spread)
-            # total_bet += BET_SIZE
+            total_bet += BET_SIZE
+            # If the away team wins by prediction and in reality
             if pred[0] > pred[1] and actual[0] > actual[1]:
-                # ml_profit += moneyline_profit(bet_size=BET_SIZE, pred_winner=0, actual_winner=0, away_ml=odds[0], home_ml=odds[1])
+                profit = moneyline_profit(bet_size=BET_SIZE, pred_winner=0, away_ml=betting_odds[0], home_ml=betting_odds[1])
+                ml_profit += profit
+                print('Win', profit, ' Total:', ml_profit, ' | Odds:', betting_odds[0])
                 wins += 1
+            # If the home team wins by prediction and in reality
             elif pred[0] < pred[1] and actual[0] < actual[1]:
-                # ml_profit += moneyline_profit(bet_size=BET_SIZE, pred_winner=0, actual_winner=0, away_ml=odds[0], home_ml=odds[1])
+                profit = moneyline_profit(bet_size=BET_SIZE, pred_winner=1, away_ml=betting_odds[0], home_ml=betting_odds[1])
+                ml_profit += profit
+                print('Win', profit, ' Total:', ml_profit, ' | Odds:', betting_odds[1])
                 wins += 1
-            # else:
-            #     ml_profit -= BET_SIZE
+            else:
+                ml_profit -= BET_SIZE
+                print('Loss, subtracting monies', ml_profit)
 
         print(wins, int(len(predictions) - wins), float(wins / len(predictions)))
-        # print('Moneyline:', ml_profit, total_bet, float(ml_profit / total_bet))
-        # print('Total Points:', total_pts_profit, total_pts_bet, float(total_pts_profit / total_pts_bet))
+        print('Moneyline:', ml_profit, total_bet, float(ml_profit / total_bet))
+        print('Total Points:', total_pts_profit, total_pts_bet, float(total_pts_profit / total_pts_bet))
         # print('Total Points Predicted Correctly:', total_pts_correct, int(total_pts_bet / 10), float(total_pts_correct / int(total_pts_bet / 10)))
 
-        file = 'FFNN Team Avgs FG 3P FT - 10 Folds.csv'
+        file = 'FFNN Team Avgs FG 3P FT - 10 Folds - Betting Results 2016-19.csv'
         with open('result_tracking/Feed Forward/' + file, 'a', newline='') as f:
             writer = csv.writer(f)
 
-            writer.writerow([i, wins, int(len(predictions) - wins), float(wins / len(predictions))])
+            writer.writerow([i, wins, int(len(predictions) - wins), float(wins / len(predictions)), ml_profit, total_bet, float(ml_profit / total_bet),
+                             total_pts_profit, total_pts_bet, float(total_pts_profit / total_pts_bet)])

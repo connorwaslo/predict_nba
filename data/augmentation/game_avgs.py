@@ -5,8 +5,8 @@ def avg(li):
     return sum(li) / len(li)
 
 
-in_files = ['../game_stats.csv']
-out_files = ['../game_avgs.csv']
+in_files = ['../game_stats_2016-17.csv', '../game_stats_2017-18.csv']
+out_files = ['../game_avgs_2016-17.csv', '../game_avgs_2017-18.csv']
 
 away_teams = {}
 home_teams = {}
