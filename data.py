@@ -1,4 +1,4 @@
-import csv
+import os
 import pandas as pd
 import numpy as np
 
@@ -204,6 +204,7 @@ def game_avg_features_part(data='data/game_avgs_2018-19.csv'):
 
 
 def game_avg_features():
+    print(os.path.exists('data/game_avgs_2016-17.csv'))
     features = []
     years = ['2016-17', '2017-18', '2018-19']
     for year in years:
