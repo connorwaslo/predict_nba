@@ -7,11 +7,21 @@ features = pd.DataFrame(data=game_avg_features())
 labels = pd.DataFrame(data=game_avg_labels())
 labels = labels.drop(labels.columns[1], axis=1)  # Can only predict one value at a time
 
-print(labels)
+# Set features header
+columns = ['A_FG', 'A_FGA', 'A_3P', 'A_3PA', 'A_FT', 'A_FTA', 'A_ORB', 'A_DRB', 'A_TRB', 'A_AST', 'A_STL', 'A_BLK', 'A_TOB', 'A_PF', 'A_AVG_PTS',
+                'H_FG', 'H_FGA', 'H_3P', 'H_3PA', 'H_FT', 'H_FTA', 'H_ORB', 'H_DRB', 'H_TRB', 'H_AST', 'H_STL', 'H_BLK', 'H_TOB', 'H_PF', 'H_AVG_PTS']
 
-print(features.shape, labels.shape)
+features.columns = columns
 
 fs = FeatureSelector(data=features, labels=labels)
 fs.identify_missing(missing_threshold=0.9)
 fs.identify_collinear(correlation_threshold=0.6)
-fs.identify_zero_importance(eval_metric='l2', task='regression')
+# fs.identify_zero_importance(eval_metric='l2', task='regression')
+
+collinear_features = fs.ops['collinear']
+print(collinear_features)
+
+print(fs.record_collinear.head())
+fs.plot_collinear(plot_all=True)
+
+# Results often say to drop: FGA, 3PA, FTA, TRB, AVG_PTS
