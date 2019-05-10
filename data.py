@@ -8,7 +8,7 @@ import numpy as np
 PLAYERS_PER_TEAM = 6  # Number of players to include per team per feature
 
 
-def odds(file='data/odds/odds18-19.csv'):
+def odds_year(file='data/odds/odds18-19.csv'):
     use_cols = ['GAME_ID', 'AWAY_ML', 'HOME_ML', 'SPREAD', 'TOTAL_POINTS']
 
     data = pd.read_csv(file, header=0, usecols=use_cols)
@@ -18,6 +18,15 @@ def odds(file='data/odds/odds18-19.csv'):
     data = list(map(lambda x: x[1:], data))
 
     return data
+
+
+def odds():
+    odds = []
+    years = ['16-17', '17-18', '18-19']
+    for year in years:
+        odds += odds_year('data/odds/odds' + year + '.csv')
+
+    return odds
 
 
 def labels(file='data/game_stats_2017-18.csv'):
