@@ -642,7 +642,7 @@ class FeatureSelector:
             # np.where returns the index so need to add 1 to have correct number
             importance_index = np.min(np.where(self.feature_importances['cumulative_importance'] > threshold))
             plt.vlines(x=importance_index + 1, ymin=0, ymax=1, linestyles='--', colors='blue')
-            plt.show();
+            plt.show()
 
             print('%d features required for %0.2f of cumulative importance' % (importance_index + 1, threshold))
 

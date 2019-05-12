@@ -5,7 +5,7 @@ import pandas as pd
 # Todo load all features instead of just offensive stats
 features = pd.DataFrame(data=game_avg_features())
 labels = pd.DataFrame(data=game_avg_labels())
-labels = labels.drop(labels.columns[1], axis=1)  # Can only predict one value at a time
+labels = labels.drop(labels.columns[0], axis=1)  # Can only predict one value at a time
 
 # Set features header
 columns = ['A_FG', 'A_FGA', 'A_3P', 'A_3PA', 'A_FT', 'A_FTA', 'A_ORB', 'A_DRB', 'A_TRB', 'A_AST', 'A_STL', 'A_BLK', 'A_TOB', 'A_PF', 'A_AVG_PTS',
@@ -18,10 +18,8 @@ fs.identify_missing(missing_threshold=0.9)
 fs.identify_collinear(correlation_threshold=0.6)
 # fs.identify_zero_importance(eval_metric='l2', task='regression')
 
-collinear_features = fs.ops['collinear']
-print(collinear_features)
-
 print(fs.record_collinear.head())
-fs.plot_collinear(plot_all=True)
+
+# fs.plot_feature_importances()
 
 # Results often say to drop: FGA, 3PA, FTA, TRB, AVG_PTS

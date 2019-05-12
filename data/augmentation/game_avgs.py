@@ -5,12 +5,13 @@ def avg(li):
     return sum(li) / len(li)
 
 
-in_files = ['../game_stats_2016-17.csv', '../game_stats_2017-18.csv']
-out_files = ['../game_avgs_2016-17.csv', '../game_avgs_2017-18.csv']
+in_files = ['../game_stats_2015-16.csv']
+out_files = ['../game_avgs_2015-16.csv']
 
 away_teams = {}
 home_teams = {}
 
+# Todo: Can't include the game we're predicting in the averages that we use to predict that game
 for file_num, file in enumerate(in_files):
     with open(file, 'r') as f:
         reader = csv.reader(f)
