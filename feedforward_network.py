@@ -165,16 +165,19 @@ for i in range(1):
     # print('Total Points Predicted Correctly:', total_pts_correct, int(total_pts_bet / 10), float(total_pts_correct / int(total_pts_bet / 10)))
 
     # file = str(first_layer) + 'x' + str(layer_factor) + ' FFNN Team Avgs FG 3P FT - 10 Folds 2016-19.csv'
-    file = 'Predict 2018.csv'
-    with open('result_tracking/Feed Forward/Profits' + file, 'a', newline='') as f:
+    file = 'Predict 2019.csv'
+    with open('result_tracking/Feed Forward/Profits/' + file, 'a', newline='') as f:
         writer = csv.writer(f)
 
         # writer.writerow([i, wins, int(len(predictions) - wins), float(wins / len(predictions)), ml_profit, total_bet, float(ml_profit / total_bet),
         #                  total_pts_profit, total_pts_bet, float(total_pts_profit / total_pts_bet)])
 
+        writer.writerow([wins, int(len(predictions) - wins), float(wins / len(predictions))])
         for tenth in moneyline_rois:
             print(tenth)
             writer.writerow(tenth)
+
+        writer.writerow(['-'])
 
     # with open('result_tracking/Feed Forward/Profits/2015-19.csv', 'w', newline='') as f:
     #     writer = csv.writer(f)

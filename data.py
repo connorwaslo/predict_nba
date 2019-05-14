@@ -216,7 +216,7 @@ def game_avg_features_part(data='data/game_avgs_2018-19.csv'):
 
 def game_avg_features():
     features = []
-    years = ['2015-16', '2016-17']  # '2017-18', '2018-19'
+    years = ['2016-17', '2017-18']  # '2017-18', '2018-19'
     for year in years:
         features += game_avg_features_part('data/game_features_' + year + '.csv')
 
@@ -238,7 +238,7 @@ def game_avg_labels_part(data='data/game_features_2018-19.csv'):
 
 def game_avg_labels():
     labels = []
-    years = ['2015-16', '2016-17']  # '2017-18', '2018-19'
+    years = ['2016-17', '2017-18']  # '2017-18', '2018-19'
     for year in years:
         labels += game_avg_labels_part('data/game_features_' + year + '.csv')
 

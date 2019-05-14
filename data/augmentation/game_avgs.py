@@ -29,8 +29,8 @@ def end_season_avgs(file='', team=''):
         return last_occurrence
 
 
-in_files = ['../game_stats_2015-16.csv', '../game_stats_2016-17.csv', '../game_stats_2017-18.csv', '../game_stats_2018-19.csv']
-out_files = ['../game_avgs_2015-16.csv', '../game_avgs_2016-17.csv', '../game_avgs_2017-18.csv', '../game_avgs_2018-19.csv']
+in_files = ['../game_stats_2014-15.csv']  # '../game_stats_2013-14.csv',
+out_files = ['../game_avgs_2013-14.csv', '../game_avgs_2014-15.csv']  #
 
 
 def write_avgs():
@@ -42,7 +42,7 @@ def write_avgs():
 
             row_count = 0
             for row in reader:
-                if row_count > 0:
+                if 0 < row_count < 1231:
                     game_id = row[1]
                     away_team = row[2]
 
@@ -56,6 +56,7 @@ def write_avgs():
                     else:
                         print('Away\t', away_team, teams[away_team])
 
+                    print(row_count)
                     away_fg = float(row[4])
                     away_fga = float(row[5])
                     away_3p = float(row[7])
@@ -214,7 +215,7 @@ def write_features():
                         statline.extend(teams[home_team][-1])
                         teams[home_team].append(row[19:])
 
-                    with open(feature_files[file_num], 'a', newline='') as of:
+                    with open(feature_files[file_num + 1], 'a', newline='') as of:
                         writer = csv.writer(of)
 
                         writer.writerow(statline)
