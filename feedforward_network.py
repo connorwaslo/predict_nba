@@ -47,9 +47,11 @@ for i in range(1):
     train_x, train_y, test_x, test_y = season_split(features=game_avg_features(), labels=game_avg_labels())
     # train_x, train_y = np.array(features_2016_19()[:-369]), np.array(labels_2016_19()[:-369])
 
+    print(train_y)
+
     model = tf.keras.models.Sequential([
         tf.keras.layers.Flatten(input_shape=train_x[0].shape),
-        tf.keras.layers.Dense(256, activation=tf.nn.relu),
+        tf.keras.layers.Dense(512, activation=tf.nn.relu),
         tf.keras.layers.Dropout(0.1),
         tf.keras.layers.Dense(2)
     ])
@@ -158,6 +160,11 @@ for i in range(1):
 
         betting_data.append(curr_bet)
         count += 1
+
+        with open('result_tracking/Feed Forward/Profits/2019 Bets.csv', 'a', newline='') as f:
+            writer = csv.writer(f)
+
+            writer.writerow([pred[0], pred[1], actual[0], actual[1]] + betting_odds)
 
     print(wins, int(len(predictions) - wins), float(wins / len(predictions)))
     # print('Moneyline:', ml_profit, total_bet, float(ml_profit / 12300))
