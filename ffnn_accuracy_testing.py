@@ -1,5 +1,7 @@
 import tensorflow as tf
 from sklearn.model_selection import train_test_split
+from sklearn import metrics
+from sklearn.ensemble import RandomForestClassifier
 import numpy as np
 import pandas as pd
 
@@ -15,7 +17,7 @@ def features(file):
 
 
 def labels(file):
-    use_cols = ['GAME_ID', 'AWAY_POINTS', 'HOME_POINTS']
+    use_cols = ['GAME_ID', 'WINNER']
 
     data = np.array(pd.read_csv(file, header=0, usecols=use_cols)).tolist()
     data.sort(key=lambda x: x[0])
@@ -35,40 +37,60 @@ print(len(train_x), len(train_y))
 print(len(test_x), len(test_y))
 print(len(val_x), len(val_y))
 
-away_wins = 0
-home_wins = 0
-for game in train_y:
-    if game[0] > game[1]:
-        away_wins += 1
-    else:
-        home_wins += 1
-
-print(away_wins, home_wins)
-
-model = tf.keras.models.Sequential([
-    tf.keras.layers.Flatten(input_shape=train_x[0].shape),
-    tf.keras.layers.Dense(512, activation=tf.nn.relu),
-    tf.keras.layers.Dropout(0.1),
-    tf.keras.layers.Dense(1, activation=tf.nn.softmax)
-])
-
-optimizer = tf.keras.optimizers.RMSprop(0.001)
-model.compile(loss='mean_squared_error',
-              optimizer=optimizer,
-              metrics=['mean_squared_error'])
-
-model.summary()
-
-early_stop = tf.keras.callbacks.EarlyStopping(min_delta=0.000001, patience=10, restore_best_weights=True)
-csv_log = tf.keras.callbacks.CSVLogger('result_tracking/Feed Forward/No Rebounds.csv')
-
-model.fit(x=train_x, y=train_y, epochs=10000, callbacks=[early_stop, csv_log], validation_data=(test_x, test_y), shuffle=True)
-
-predictions = model.predict(val_x)
+clf = RandomForestClassifier(n_estimators=500)
+clf.fit(train_x, train_y)
+preds = clf.predict(test_x)
 
 wins = 0
-for pred, actual in zip(predictions, val_y):
+for pred, outcome in zip(preds, test_y):
+    if pred == outcome[0]:
+        wins += 1
 
-    print(pred, actual)
+print(wins, len(preds), float(wins / len(preds)))
 
-print(wins, len(predictions), float(wins / len(predictions)))
+preds = clf.predict(val_x)
+wins = 0
+for pred, outcome in zip(preds, val_y):
+    if pred == outcome[0]:
+        wins += 1
+
+print(wins, len(preds), float(wins / len(preds)))
+
+# away_wins = 0
+# home_wins = 0
+# for game in train_y:
+#     if game == 0:
+#         away_wins += 1
+#     else:
+#         home_wins += 1
+#
+# print(away_wins, home_wins)
+#
+# model = tf.keras.models.Sequential([
+#     tf.keras.layers.Flatten(input_shape=train_x[0].shape),
+#     tf.keras.layers.Dense(512, activation=tf.nn.relu),
+#     tf.keras.layers.Dropout(0.1),
+#     tf.keras.layers.Dense(1, activation=tf.nn.softmax)
+# ])
+#
+# # optimizer = tf.keras.optimizers.RMSprop(0.001)
+# model.compile(loss='binary_crossentropy',
+#               optimizer='adam',
+#               metrics=['accuracy'])
+#
+# model.summary()
+#
+# early_stop = tf.keras.callbacks.EarlyStopping(min_delta=0.000001, patience=10, restore_best_weights=True)
+# csv_log = tf.keras.callbacks.CSVLogger('result_tracking/Feed Forward/No Rebounds.csv')
+#
+# model.fit(x=train_x, y=train_y, epochs=10000, callbacks=[early_stop, csv_log], validation_data=(test_x, test_y), shuffle=True)
+#
+# predictions = model.predict(val_x)
+#
+# wins = 0
+# for pred, actual in zip(predictions, val_y):
+#     if pred == actual:
+#         wins += 1
+#     # print(pred, actual)
+#
+# print(wins, len(predictions), float(wins / len(predictions)))
