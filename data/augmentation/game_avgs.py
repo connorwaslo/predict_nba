@@ -178,7 +178,8 @@ def write_avgs():
 
 def write_features():
     feature_files = [name.replace('avgs', 'features') for name in out_files]
-    for file_num, file in enumerate(out_files):
+
+    for file_num, file in enumerate(out_files[1:]):
         teams = {}
 
         with open(file, 'r') as f:
@@ -186,39 +187,40 @@ def write_features():
 
             row_count = 0
             for row in reader:
-                game_id = row[0]
-                away_team = row[1]
+                if row_count > 0:
+                    game_id = row[0]
+                    away_team = row[1]
 
-                statline = [game_id, away_team]
+                    statline = [game_id, away_team]
 
-                if away_team not in teams.keys():
-                    teams[away_team] = []
-                    teams[away_team].append(end_season_avgs(file, away_team))
-                    statline.extend(teams[away_team][0])
-                    teams[away_team].append(row[2:18])  # Also append this game's stats
-                else:
-                    statline.extend(teams[away_team][-1])
-                    teams[away_team].append(row[2:18])
+                    if away_team not in teams.keys():
+                        teams[away_team] = []
+                        teams[away_team].append(end_season_avgs(out_files[file_num], away_team))
+                        statline.extend(teams[away_team][0])
+                        teams[away_team].append(row[2:18])  # Also append this game's stats
+                    else:
+                        statline.extend(teams[away_team][-1])
+                        teams[away_team].append(row[2:18])
 
-                home_team = row[18]
-                statline.append(home_team)
-                # Check if need to add blank team
-                if home_team not in teams.keys():
-                    teams[home_team] = []
-                    teams[home_team].append(end_season_avgs(file, home_team))
-                    statline.extend(teams[home_team][0])
-                    teams[home_team].append(row[19:])  # Also append this game's stats
-                else:
-                    statline.extend(teams[home_team][-1])
-                    teams[home_team].append(row[19:])
+                    home_team = row[18]
+                    statline.append(home_team)
+                    # Check if need to add blank team
+                    if home_team not in teams.keys():
+                        teams[home_team] = []
+                        teams[home_team].append(end_season_avgs(out_files[file_num], home_team))
+                        statline.extend(teams[home_team][0])
+                        teams[home_team].append(row[19:])  # Also append this game's stats
+                    else:
+                        statline.extend(teams[home_team][-1])
+                        teams[home_team].append(row[19:])
 
-                with open(feature_files[file_num], 'a', newline='') as of:
-                    writer = csv.writer(of)
+                    with open(feature_files[file_num], 'a', newline='') as of:
+                        writer = csv.writer(of)
 
-                    writer.writerow(statline)
+                        writer.writerow(statline)
 
                 row_count += 1
 
 
-write_avgs()
-# write_features()
+# write_avgs()
+write_features()
