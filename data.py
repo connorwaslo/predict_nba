@@ -246,25 +246,6 @@ def game_avg_labels():
     return labels
 
 
-# Not useful as of right now...
-def features_dataframe():
-    feats = features()
-    labs = labels()
-
-    labs = list(map(lambda x: x[1:], labs))
-
-    all_feautures = []
-    for feat, lab in zip(feats, labs):
-        all_feautures.append(feat + lab)
-
-    # This doesn't actually work because too many columns
-    headers = ['GAME_ID', 'AVG_FG', 'AVG_FGA', 'AVG_3P', 'AVG_3PA', 'AVG_FT', 'AVG_FTA', 'AVG_ORB', 'AVG_DRB',
-                'AVG_TRB', 'AVG_AST', 'AVG_STL', 'AVG_BLK', 'AVG_TOB', 'AVG_PF', 'AVG_PTS', 'AWAY_POINTS', 'HOME_POINTS']
-    df = pd.DataFrame(data=all_feautures, columns=headers)
-
-    return df
-
-
 def features_2016_19():
     a = features('data/game_stats_2016-17.csv', 'data/player_avgs_2016-17.csv')
     print('Features 1/3')
@@ -323,10 +304,32 @@ def adv_features_part(data):
 
 def adv_features():
     features = []
-    years = ['2013-14', '2014-15', '2015-16', '2016-17',
-             '2017-18', '2018-19']  # '2009-10', '2010-11', '2011-12', '2012-13',
+    years = ['2009-10', '2010-11', '2011-12', '2012-13', '2013-14', '2014-15', '2015-16', '2016-17',
+             '2017-18', '2018-19']
     for year in years:
         features += adv_features_part('data/advanced_stats/adv_avg_features_' + year + '.csv')
 
     return features
 
+
+def adv_labels_part(data):
+    use_cols = ['GAME_ID', 'A_PTS', 'H_PTS']
+
+    data = np.array(pd.read_csv(data, header=0, usecols=use_cols)).tolist()
+
+    data.sort(key=lambda x: x[0])  # Sort by GAME_ID
+
+    data = list(map(lambda x: x[1:], data))  #
+
+    print(np.array(data))
+    return data
+
+
+def adv_labels():
+    labels = []
+    years = ['2009-10', '2010-11', '2011-12', '2012-13', '2013-14', '2014-15', '2015-16', '2016-17',
+             '2017-18', '2018-19']
+    for year in years:
+        labels += adv_labels_part('data/advanced_stats/adv_avg_features_' + year + '.csv')
+
+    return labels

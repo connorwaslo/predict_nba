@@ -1,5 +1,5 @@
 from feature_selector import FeatureSelector
-from data import adv_features, game_avg_labels
+from data import adv_features, adv_labels
 import pandas as pd
 import numpy as np
 
@@ -36,14 +36,14 @@ import numpy as np
 # labels = pd.DataFrame(data=labels())
 # labels = labels.drop(labels.columns[0], axis=1)  # Can only predict one value at a time
 
-columns = ['GAME_ID', 'AWAY', 'A_TS%', 'A_eFG%', 'A_3PAr', 'A_FTr', 'A_ORB%', 'A_DRB%',
+columns = ['AWAY', 'A_TS%', 'A_eFG%', 'A_3PAr', 'A_FTr', 'A_ORB%', 'A_DRB%',
                              'A_TRB%', 'A_AST%', 'A_STL%', 'A_BL%', 'A_TOV%', 'A_ORtg', 'A_DRtg',
                              'HOME', 'H_TS%', 'H_eFG%', 'H_3PAr', 'H_FTr', 'H_ORB%', 'H_DRB%',
                              'H_TRB%', 'H_AST%', 'H_STL%', 'H_BL%', 'H_TOV%', 'H_ORtg', 'H_DRtg'
                              ]
 
 features = pd.DataFrame(adv_features())
-labels = pd.DataFrame(game_avg_labels())
+labels = pd.DataFrame(adv_labels())
 
 features.columns = columns
 labels.columns = ['AWAY_POINTS', 'HOME_POINTS']
@@ -55,7 +55,7 @@ fs = FeatureSelector(data=features, labels=labels)
 fs.identify_missing(missing_threshold=0.9)
 fs.identify_collinear(correlation_threshold=0.5)
 fs.plot_collinear()
-fs.identify_zero_importance(eval_metric='l2', task='regression')
+# fs.identify_zero_importance(eval_metric='l2', task='regression')
 
 # Drop:
 # FGA, 3PA, FTA
