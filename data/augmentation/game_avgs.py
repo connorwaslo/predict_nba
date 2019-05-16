@@ -366,7 +366,7 @@ def write_adv_avgs():
 
 
 def write_adv_features():
-    feature_files = [name.replace('stats', 'features') for name in out_adv_files]
+    feature_files = [name.replace('stats_', 'features_') for name in out_adv_files]
 
     for file_num, file in enumerate(out_adv_files[1:]):
         teams = {}
@@ -384,7 +384,7 @@ def write_adv_features():
 
                     if away_team not in teams.keys():
                         teams[away_team] = []
-                        teams[away_team].append(end_season_avgs(out_files[file_num], away_team))
+                        teams[away_team].append(end_season_avgs(out_adv_files[file_num], away_team))
                         statline.extend(teams[away_team][0])
                         teams[away_team].append(row[2:15])  # Also append this game's stats
                     else:
@@ -396,7 +396,7 @@ def write_adv_features():
                     # Check if need to add blank team
                     if home_team not in teams.keys():
                         teams[home_team] = []
-                        teams[home_team].append(end_season_avgs(out_files[file_num], home_team))
+                        teams[home_team].append(end_season_avgs(out_adv_files[file_num], home_team))
                         statline.extend(teams[home_team][0])
                         teams[home_team].append(row[16:])  # Also append this game's stats
                     else:
@@ -407,6 +407,8 @@ def write_adv_features():
                         writer = csv.writer(of)
 
                         writer.writerow(statline)
+
+                    print(row_count, '/ 1230', )
 
                 row_count += 1
 
