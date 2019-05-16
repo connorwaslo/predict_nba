@@ -223,5 +223,180 @@ def write_features():
                 row_count += 1
 
 
-# write_avgs()
-write_features()
+in_adv_files = ['../advanced_stats/adv_stats_2008-09.csv',
+                '../advanced_stats/adv_stats_2009-10.csv',
+                '../advanced_stats/adv_stats_2010-11.csv',
+                '../advanced_stats/adv_stats_2011-12.csv',
+                '../advanced_stats/adv_stats_2012-13.csv',
+                '../advanced_stats/adv_stats_2013-14.csv',
+                '../advanced_stats/adv_stats_2014-15.csv',
+                '../advanced_stats/adv_stats_2015-16.csv',
+                '../advanced_stats/adv_stats_2016-17.csv',
+                '../advanced_stats/adv_stats_2017-18.csv',
+                '../advanced_stats/adv_stats_2018-19.csv']
+out_adv_files = ['../advanced_stats/adv_avg_stats_2008-09.csv',
+                '../advanced_stats/adv_avg_stats_2009-10.csv',
+                '../advanced_stats/adv_avg_stats_2010-11.csv',
+                '../advanced_stats/adv_avg_stats_2011-12.csv',
+                '../advanced_stats/adv_avg_stats_2012-13.csv',
+                '../advanced_stats/adv_avg_stats_2013-14.csv',
+                '../advanced_stats/adv_avg_stats_2014-15.csv',
+                '../advanced_stats/adv_avg_stats_2015-16.csv',
+                '../advanced_stats/adv_avg_stats_2016-17.csv',
+                '../advanced_stats/adv_avg_stats_2017-18.csv',
+                '../advanced_stats/adv_avg_stats_2018-19.csv']
+
+def write_adv_avgs():
+    for file_num, file in enumerate(in_adv_files):
+        teams = {}
+
+        with open(out_adv_files[file_num], 'w', newline='') as of:
+            writer = csv.writer(of)
+
+            writer.writerow(['GAME_ID', 'AWAY', 'A_TS%', 'A_eFG%', 'A_3PAr', 'A_FTr', 'A_ORB%', 'A_DRB%',
+                             'A_TRB%', 'A_AST%', 'A_STL%', 'A_BL%', 'A_TOV%', 'A_ORtg', 'A_DRtg',
+                             'HOME', 'H_TS%', 'H_eFG%', 'H_3PAr', 'H_FTr', 'H_ORB%', 'H_DRB%',
+                             'H_TRB%', 'H_AST%', 'H_STL%', 'H_BL%', 'H_TOV%', 'H_ORtg', 'H_DRtg'
+                             ])
+
+        with open(file, 'r') as f:
+            reader = csv.reader(f)
+
+            row_count = 0
+            for row in reader:
+                if 0 < row_count < 1231:
+                    game_id = row[1]
+                    away_team = row[2]
+
+                    statline = [game_id, away_team]
+
+                    # Check if need to add blank team
+                    if away_team not in teams.keys():
+                        teams[away_team] = {'TS%': [], 'eFG%': [], '3PAr': [], 'FTr': [],
+                                            'ORB%': [], 'DRB%': [], 'TRB%': [], 'AST%': [],
+                                            'STL%': [], 'BLK%': [], 'TOV%': [], 'ORtg': [],
+                                            'DRtg': []}
+                    else:
+                        print('Away\t', away_team, teams[away_team])
+
+                    print(row_count)
+                    away_ts = float(row[4])
+                    away_efg = float(row[5])
+                    away_3p = float(row[6])
+                    away_ft = float(row[7])
+                    away_orb = float(row[8])
+                    away_drb = float(row[9])
+                    away_trb = float(row[10])
+                    away_ast = float(row[11])
+                    away_stl = float(row[12])
+                    away_blk = float(row[13])
+                    away_tov = float(row[14])
+                    away_ortg = float(row[16])
+                    away_drtg = float(row[17])
+
+                    # Add stats to running list for team
+                    teams[away_team]['TS%'].append(away_ts)
+                    teams[away_team]['eFG%'].append(away_efg)
+                    teams[away_team]['3PAr'].append(away_3p)
+                    teams[away_team]['FTr'].append(away_ft)
+                    teams[away_team]['ORB%'].append(away_orb)
+                    teams[away_team]['DRB%'].append(away_drb)
+                    teams[away_team]['TRB%'].append(away_trb)
+                    teams[away_team]['AST%'].append(away_ast)
+                    teams[away_team]['STL%'].append(away_stl)
+                    teams[away_team]['BLK%'].append(away_blk)
+                    teams[away_team]['TOV%'].append(away_tov)
+                    teams[away_team]['ORtg'].append(away_ortg)
+                    teams[away_team]['DRtg'].append(away_drtg)
+
+                    # Append averages to list
+                    for key in teams[away_team].keys():
+                        statline.append(avg(teams[away_team][key]))
+                    # statline.append(avg(teams[away_team]['FG']))
+                    # statline.append(avg(teams[away_team]['FGA']))
+                    # statline.append(avg(teams[away_team]['3P']))
+                    # statline.append(avg(teams[away_team]['3PA']))
+                    # statline.append(avg(teams[away_team]['FT']))
+                    # statline.append(avg(teams[away_team]['FTA']))
+                    # statline.append(avg(teams[away_team]['ORB']))
+                    # statline.append(avg(teams[away_team]['DRB']))
+                    # statline.append(avg(teams[away_team]['TRB']))
+                    # statline.append(avg(teams[away_team]['AST']))
+                    # statline.append(avg(teams[away_team]['STL']))
+                    # statline.append(avg(teams[away_team]['BLK']))
+                    # statline.append(avg(teams[away_team]['TOB']))
+                    # statline.append(avg(teams[away_team]['PF']))
+                    # statline.append(avg(teams[away_team]['PTS']))
+                    # statline.append(away_pts)
+
+                    home_team = row[18]
+                    statline.append(home_team)
+                    # Check if need to add blank team
+                    if home_team not in teams.keys():
+                        teams[home_team] = {'TS%': [], 'eFG%': [], '3PAr': [], 'FTr': [],
+                                            'ORB%': [], 'DRB%': [], 'TRB%': [], 'AST%': [],
+                                            'STL%': [], 'BLK%': [], 'TOV%': [], 'ORtg': [],
+                                            'DRtg': []}
+                    else:
+                        print('Home:\t', teams[home_team])
+
+                    home_ts = float(row[20])
+                    home_efg = float(row[21])
+                    home_3p = float(row[22])
+                    home_ft = float(row[23])
+                    home_orb = float(row[24])
+                    home_drb = float(row[25])
+                    home_trb = float(row[26])
+                    home_ast = float(row[27])
+                    home_stl = float(row[28])
+                    home_blk = float(row[29])
+                    home_tov = float(row[30])
+                    home_ortg = float(row[32])
+                    home_drtg = float(row[33])
+
+                    # Add stats to running list for team
+                    teams[home_team]['TS%'].append(home_ts)
+                    teams[home_team]['eFG%'].append(home_efg)
+                    teams[home_team]['3PAr'].append(home_3p)
+                    teams[home_team]['FTr'].append(home_ft)
+                    teams[home_team]['ORB%'].append(home_orb)
+                    teams[home_team]['DRB%'].append(home_drb)
+                    teams[home_team]['TRB%'].append(home_trb)
+                    teams[home_team]['AST%'].append(home_ast)
+                    teams[home_team]['STL%'].append(home_stl)
+                    teams[home_team]['BLK%'].append(home_blk)
+                    teams[home_team]['TOV%'].append(home_tov)
+                    teams[home_team]['ORtg'].append(home_ortg)
+                    teams[home_team]['DRtg'].append(home_drtg)
+
+                    # Append averages to list
+                    # Append averages to list
+                    for key in teams[home_team].keys():
+                        statline.append(avg(teams[home_team][key]))
+                    # statline.append(avg(teams[home_team]['FG']))
+                    # statline.append(avg(teams[home_team]['FGA']))
+                    # statline.append(avg(teams[home_team]['3P']))
+                    # statline.append(avg(teams[home_team]['3PA']))
+                    # statline.append(avg(teams[home_team]['FT']))
+                    # statline.append(avg(teams[home_team]['FTA']))
+                    # statline.append(avg(teams[home_team]['ORB']))
+                    # statline.append(avg(teams[home_team]['DRB']))
+                    # statline.append(avg(teams[home_team]['TRB']))
+                    # statline.append(avg(teams[home_team]['AST']))
+                    # statline.append(avg(teams[home_team]['STL']))
+                    # statline.append(avg(teams[home_team]['BLK']))
+                    # statline.append(avg(teams[home_team]['TOB']))
+                    # statline.append(avg(teams[home_team]['PF']))
+                    # statline.append(avg(teams[home_team]['PTS']))
+                    # statline.append(home_pts)
+
+                    with open(out_adv_files[file_num], 'a', newline='') as of:
+                        writer = csv.writer(of)
+
+                        writer.writerow(statline)
+
+                row_count += 1
+
+
+write_adv_avgs()
+# write_features()
