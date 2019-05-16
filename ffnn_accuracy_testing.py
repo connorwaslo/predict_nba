@@ -1,12 +1,9 @@
 import tensorflow as tf
 from sklearn.model_selection import train_test_split
+from data import adv_features, adv_labels
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-
-
-def advanced_features(file):
-    use_cols = ['']
 
 
 def features(file):
@@ -53,26 +50,26 @@ def labels(file):
     return np.array(data)
 
 
-train_x, test_x, train_y, test_y = train_test_split(features('data/game_features_2016-19.csv'),
-                                                    labels('data/game_features_2016-19.csv'),
+train_x, test_x, train_y, test_y = train_test_split(adv_features(),
+                                                    adv_labels(),
                                                     test_size=0.1)
 
-val_x = features('data/game_validation_2019.csv')
-val_y = labels('data/game_validation_2019.csv')
+val_x = adv_features(['2018-19'])
+val_y = adv_labels(['2018-19'])
 
 print(len(train_x), len(train_y))
 print(len(test_x), len(test_y))
 print(len(val_x), len(val_y))
 
+print(train_x[0], train_y[0])
+
 away_wins = 0
 home_wins = 0
-for game in train_y:
+for game in val_y:
     if game[0] > game[1]:
         away_wins += 1
     else:
         home_wins += 1
-
-print(away_wins, home_wins)
 
 model = tf.keras.models.Sequential([
     tf.keras.layers.Flatten(input_shape=train_x[0].shape),
@@ -104,6 +101,7 @@ for pred, actual in zip(predictions, val_y):
     # print(pred, actual)
 
 print(wins, len(predictions), float(wins / len(predictions)))
+print(away_wins, home_wins, 'Home%:', float(home_wins / (away_wins + home_wins)))
 
 plt.plot(history.history['val_loss'])
 plt.plot(history.history['loss'])

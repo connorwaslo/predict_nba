@@ -280,11 +280,15 @@ def adv_features_part(data):
     #             'H_FG', 'H_FGA', 'H_3P', 'H_3PA', 'H_FT', 'H_FTA', 'H_ORB', 'H_DRB', 'H_TRB', 'H_AST', 'H_STL', 'H_BLK', 'H_TOB', 'H_PF', 'H_AVG_PTS']
 
     # Offense features
-    use_cols = ['GAME_ID', 'AWAY', 'A_TS%', 'A_eFG%', 'A_3PAr', 'A_FTr', 'A_ORB%', 'A_DRB%',
-                             'A_TRB%', 'A_AST%', 'A_STL%', 'A_BL%', 'A_TOV%', 'A_ORtg', 'A_DRtg',
-                             'HOME', 'H_TS%', 'H_eFG%', 'H_3PAr', 'H_FTr', 'H_ORB%', 'H_DRB%',
-                             'H_TRB%', 'H_AST%', 'H_STL%', 'H_BL%', 'H_TOV%', 'H_ORtg', 'H_DRtg'
-                             ]
+    # use_cols = ['GAME_ID', 'A_TS%', 'A_eFG%', 'A_3PAr', 'A_FTr', 'A_ORB%', 'A_DRB%',
+    #                          'A_TRB%', 'A_AST%', 'A_STL%', 'A_BL%', 'A_TOV%', 'A_ORtg', 'A_DRtg',
+    #                          'H_TS%', 'H_eFG%', 'H_3PAr', 'H_FTr', 'H_ORB%', 'H_DRB%',
+    #                          'H_TRB%', 'H_AST%', 'H_STL%', 'H_BL%', 'H_TOV%', 'H_ORtg', 'H_DRtg'
+    #                          ]
+
+    use_cols = ['GAME_ID', 'A_ORtg', 'A_DRtg',
+                'H_ORtg', 'H_DRtg'
+                ]
 
     # Important features
     # use_cols = ['GAME_ID', 'H_FGA', 'A_AVG_PTS', 'H_DRB', 'H_STL', 'H_PF']
@@ -302,14 +306,15 @@ def adv_features_part(data):
     return data
 
 
-def adv_features():
+def adv_features(years=None):
     features = []
-    years = ['2009-10', '2010-11', '2011-12', '2012-13', '2013-14', '2014-15', '2015-16', '2016-17',
-             '2017-18', '2018-19']
+    if years is None:
+        years = ['2015-16', '2016-17',
+                 '2017-18']  # '2009-10', '2010-11', '2011-12', '2012-13', '2013-14', '2014-15',
     for year in years:
         features += adv_features_part('data/advanced_stats/adv_avg_features_' + year + '.csv')
 
-    return features
+    return np.array(features)
 
 
 def adv_labels_part(data):
@@ -321,15 +326,15 @@ def adv_labels_part(data):
 
     data = list(map(lambda x: x[1:], data))  #
 
-    print(np.array(data))
     return data
 
 
-def adv_labels():
+def adv_labels(years=None):
     labels = []
-    years = ['2009-10', '2010-11', '2011-12', '2012-13', '2013-14', '2014-15', '2015-16', '2016-17',
-             '2017-18', '2018-19']
+    if years is None:
+        years = ['2015-16', '2016-17',
+                 '2017-18']  # '2009-10', '2010-11', '2011-12', '2012-13', '2013-14', '2014-15', '2015-16',
     for year in years:
         labels += adv_labels_part('data/advanced_stats/adv_avg_features_' + year + '.csv')
 
-    return labels
+    return np.array(labels)
