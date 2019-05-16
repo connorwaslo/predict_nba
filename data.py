@@ -238,9 +238,10 @@ def game_avg_labels_part(data):
 
 def game_avg_labels():
     labels = []
-    years = ['2016-17', '2017-18', '2018-19']  # '2017-18', '2018-19'
+    years = ['2013-14', '2014-15', '2015-16', '2016-17',
+             '2017-18', '2018-19']  # '2009-10', '2010-11', '2011-12', '2012-13',
     for year in years:
-        labels += game_avg_labels_part('data/game_features_' + year + '.csv')
+        labels += game_avg_labels_part('data/game_avgs_' + year + '.csv')
 
     return labels
 
@@ -290,4 +291,42 @@ def test_features():
 
 def test_labels():
     return labels(file='data/game_stats.csv')
+
+
+def adv_features_part(data):
+    # All features
+    # use_cols = ['GAME_ID', 'A_FG', 'A_FGA', 'A_3P', 'A_3PA', 'A_FT', 'A_FTA', 'A_ORB', 'A_DRB', 'A_TRB', 'A_AST', 'A_STL', 'A_BLK', 'A_TOB', 'A_PF', 'A_AVG_PTS',
+    #             'H_FG', 'H_FGA', 'H_3P', 'H_3PA', 'H_FT', 'H_FTA', 'H_ORB', 'H_DRB', 'H_TRB', 'H_AST', 'H_STL', 'H_BLK', 'H_TOB', 'H_PF', 'H_AVG_PTS']
+
+    # Offense features
+    use_cols = ['GAME_ID', 'AWAY', 'A_TS%', 'A_eFG%', 'A_3PAr', 'A_FTr', 'A_ORB%', 'A_DRB%',
+                             'A_TRB%', 'A_AST%', 'A_STL%', 'A_BL%', 'A_TOV%', 'A_ORtg', 'A_DRtg',
+                             'HOME', 'H_TS%', 'H_eFG%', 'H_3PAr', 'H_FTr', 'H_ORB%', 'H_DRB%',
+                             'H_TRB%', 'H_AST%', 'H_STL%', 'H_BL%', 'H_TOV%', 'H_ORtg', 'H_DRtg'
+                             ]
+
+    # Important features
+    # use_cols = ['GAME_ID', 'H_FGA', 'A_AVG_PTS', 'H_DRB', 'H_STL', 'H_PF']
+
+    # Test 1
+    # use_cols = ['GAME_ID', 'A_FG', 'A_3P', 'A_FT', 'A_ORB', 'A_DRB', 'H_FG', 'H_3P', 'H_FT', 'H_ORB', 'H_DRB']
+
+    data = np.array(pd.read_csv(data, header=0, usecols=use_cols)).tolist()
+
+    data.sort(key=lambda x: x[0])  # Sort by GAME_ID
+
+    data = list(map(lambda x: x[1:], data))  #
+
+    # print(np.array(data))
+    return data
+
+
+def adv_features():
+    features = []
+    years = ['2013-14', '2014-15', '2015-16', '2016-17',
+             '2017-18', '2018-19']  # '2009-10', '2010-11', '2011-12', '2012-13',
+    for year in years:
+        features += adv_features_part('data/advanced_stats/adv_avg_features_' + year + '.csv')
+
+    return features
 
