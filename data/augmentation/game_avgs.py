@@ -22,9 +22,9 @@ def end_season_avgs(file='', team=''):
         # Home: 22
         for row in reader:
             if row[1] == team:
-                last_occurrence = [float(item) for item in row[2:16]]  # Leave out team name and GAME_ID
+                last_occurrence = [float(item) for item in row[2:15]]  # Leave out team name, GAME_ID and points
             elif row[16] == team:
-                last_occurrence = [float(item) for item in row[17:]]  # Leave out team name
+                last_occurrence = [float(item) for item in row[17:-1]]  # Leave out team name and points
 
         return last_occurrence
 
@@ -378,9 +378,9 @@ def write_adv_features():
             writer = csv.writer(of)
 
             writer.writerow(['GAME_ID', 'AWAY', 'A_TS%', 'A_eFG%', 'A_3PAr', 'A_FTr', 'A_ORB%', 'A_DRB%',
-                             'A_TRB%', 'A_AST%', 'A_STL%', 'A_BL%', 'A_TOV%', 'A_ORtg', 'A_DRtg', 'A_PTS',
+                             'A_TRB%', 'A_AST%', 'A_STL%', 'A_BLK%', 'A_TOV%', 'A_ORtg', 'A_DRtg', 'A_PTS',
                              'HOME', 'H_TS%', 'H_eFG%', 'H_3PAr', 'H_FTr', 'H_ORB%', 'H_DRB%',
-                             'H_TRB%', 'H_AST%', 'H_STL%', 'H_BL%', 'H_TOV%', 'H_ORtg', 'H_DRtg', 'H_PTS',
+                             'H_TRB%', 'H_AST%', 'H_STL%', 'H_BLK%', 'H_TOV%', 'H_ORtg', 'H_DRtg', 'H_PTS',
                              ])
 
         with open(file, 'r') as f:
@@ -397,11 +397,11 @@ def write_adv_features():
                     if away_team not in teams.keys():
                         teams[away_team] = []
                         teams[away_team].append(end_season_avgs(out_adv_files[file_num], away_team))
-                        statline.extend(teams[away_team][0])
-                        teams[away_team].append(row[2:16])  # Also append this game's stats
+                        statline.extend(teams[away_team][0] + [float(row[15])])
+                        teams[away_team].append(row[2:15])  # Also append this game's stats
                     else:
-                        statline.extend(teams[away_team][-1])
-                        teams[away_team].append(row[2:16])
+                        statline.extend(teams[away_team][-1] + [float(row[15])])
+                        teams[away_team].append(row[2:15])
 
                     home_team = row[16]
                     statline.append(home_team)
@@ -409,11 +409,11 @@ def write_adv_features():
                     if home_team not in teams.keys():
                         teams[home_team] = []
                         teams[home_team].append(end_season_avgs(out_adv_files[file_num], home_team))
-                        statline.extend(teams[home_team][0])
-                        teams[home_team].append(row[17:])  # Also append this game's stats
+                        statline.extend(teams[home_team][0] + [float(row[-1])])
+                        teams[home_team].append(row[17:-1])  # Also append this game's stats
                     else:
-                        statline.extend(teams[home_team][-1])
-                        teams[home_team].append(row[17:])
+                        statline.extend(teams[home_team][-1] + [float(row[-1])])
+                        teams[home_team].append(row[17:-1])
 
                     with open(feature_files[file_num + 1], 'a', newline='') as of:
                         writer = csv.writer(of)

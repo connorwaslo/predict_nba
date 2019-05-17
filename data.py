@@ -20,9 +20,11 @@ def odds_year(file='data/odds/odds18-19.csv'):
     return data
 
 
-def odds():
+def odds(years=None):
     odds = []
-    years = ['16-17', '17-18', '18-19']
+    if years is None:
+        years = ['16-17', '17-18', '18-19']
+
     for year in years:
         odds += odds_year('data/odds/odds' + year + '.csv')
 
@@ -286,8 +288,8 @@ def adv_features_part(data):
     #                          'H_TRB%', 'H_AST%', 'H_STL%', 'H_BL%', 'H_TOV%', 'H_ORtg', 'H_DRtg'
     #                          ]
 
-    use_cols = ['GAME_ID', 'A_ORtg', 'A_DRtg',
-                'H_ORtg', 'H_DRtg'
+    use_cols = ['GAME_ID', 'A_ORtg', 'A_DRtg', 'A_TS%', 'A_TOV%',
+                'H_ORtg', 'H_DRtg', 'H_TS%', 'H_TOV%'
                 ]
 
     # Important features

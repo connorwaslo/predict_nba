@@ -1,108 +1,108 @@
 import tensorflow as tf
 from sklearn.model_selection import train_test_split
-from data import adv_features, adv_labels
-import matplotlib.pyplot as plt
-import numpy as np
-import pandas as pd
+from data import adv_features, adv_labels, odds
+import csv
 
 
-def features(file):
-    # use_cols = ['GAME_ID', 'A_FG', 'A_3P', 'A_FT', 'H_FG', 'H_3P', 'H_FT']
-    # use_cols = ['GAME_ID', 'A_FG', 'A_FGA', 'A_3P', 'A_3PA', 'A_FT', 'A_FTA', 'A_ORB', 'A_DRB', 'A_TRB', 'A_AST', 'A_STL', 'A_BLK', 'A_TOB', 'A_PF', 'A_AVG_PTS',
-    #             'H_FG', 'H_FGA', 'H_3P', 'H_3PA', 'H_FT', 'H_FTA', 'H_ORB', 'H_DRB', 'H_TRB', 'H_AST', 'H_STL', 'H_BLK', 'H_TOB', 'H_PF', 'H_AVG_PTS']
+odds = odds(['18-19'])  # Get the betting odds for 2018-19 season
 
-    # 256: val_loss = 138.7081, 60.46%
-    # use_cols = ['GAME_ID', 'A_FG', 'A_3P', 'A_FT', 'A_ORB', 'A_DRB', 'A_AST', 'A_STL', 'A_BLK', 'A_TOB', 'A_PF',
-    #             'H_FG', 'H_3P', 'H_FT', 'H_ORB', 'H_DRB', 'H_AST', 'H_STL', 'H_BLK', 'H_TOB', 'H_PF']
+network_sizes = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
 
-    # 128: val_loss = 129.4028, 64.45%
-    use_cols = ['GAME_ID', 'A_FG', 'A_3P', 'A_FT', 'A_ORB', 'A_DRB', 'A_AST', 'A_STL', 'A_BLK',
-                'H_FG', 'H_3P', 'H_FT', 'H_ORB', 'H_DRB', 'H_AST', 'H_STL', 'H_BLK']
+# Test each network size
+for size in network_sizes:
 
-    # use_cols = ['GAME_ID', 'A_FG', 'A_3P', 'A_FT', 'A_ORB', 'A_DRB', 'A_STL', 'A_BLK',
-    #             'H_FG', 'H_3P', 'H_FT', 'H_ORB', 'H_DRB', 'H_STL', 'H_BLK']
+    with open('result_tracking/Feed Forward/Advanced Stats/Rtgs TS TOV.csv', 'a', newline='') as f:
+        writer = csv.writer(f)
 
-    # use_cols = ['GAME_ID', 'A_FG', 'A_3P', 'A_FT', 'A_ORB', 'A_DRB',
-    #             'H_FG', 'H_3P', 'H_FT', 'H_ORB', 'H_DRB']
+        writer.writerow([])
+        writer.writerow([size])
 
-    # 256: 59%
-    # use_cols = ['GAME_ID', 'A_FG', 'A_3P', 'A_FT', 'A_ORB',
-    #             'H_FG', 'H_3P', 'H_FT', 'H_ORB']
+    # Run the network 10 times to calculate an average from that
+    for runs in range(10):
+        train_x, test_x, train_y, test_y = train_test_split(adv_features(),
+                                                            adv_labels(),
+                                                            test_size=0.1)
 
-    # 512: 59.8%
-    # use_cols = ['GAME_ID', 'A_FG', 'A_3P', 'A_FT',
-    #             'H_FG', 'H_3P', 'H_FT']
+        val_x = adv_features(['2018-19'])
+        val_y = adv_labels(['2018-19'])
 
-    data = np.array(pd.read_csv(file, header=0, usecols=use_cols)).tolist()
-    data.sort(key=lambda x: x[0])
-    data = list(map(lambda x: x[1:], data))
+        print(len(train_x), len(train_y))
+        print(len(test_x), len(test_y))
+        print(len(val_x), len(val_y))
 
-    return np.array(data)
+        print(train_x[0], train_y[0])
 
+        away_wins = 0
+        home_wins = 0
+        for game in val_y:
+            if game[0] > game[1]:
+                away_wins += 1
+            else:
+                home_wins += 1
 
-def labels(file):
-    use_cols = ['GAME_ID', 'AWAY_POINTS', 'HOME_POINTS']
+        model = tf.keras.models.Sequential([
+            tf.keras.layers.Flatten(input_shape=train_x[0].shape),
+            tf.keras.layers.Dense(size, activation=tf.nn.relu),
+            tf.keras.layers.Dropout(0.1),
+            tf.keras.layers.Dense(2)
+        ])
 
-    data = np.array(pd.read_csv(file, header=0, usecols=use_cols)).tolist()
-    data.sort(key=lambda x: x[0])
-    data = list(map(lambda x: x[1:], data))
+        optimizer = tf.keras.optimizers.RMSprop(0.0001)
+        model.compile(loss='mean_squared_error',
+                      optimizer=optimizer,
+                      metrics=['mean_squared_error', 'mean_absolute_error'])
 
-    return np.array(data)
+        model.summary()
 
+        early_stop = tf.keras.callbacks.EarlyStopping(min_delta=0.01, patience=10, restore_best_weights=True)
+        csv_log = tf.keras.callbacks.CSVLogger('result_tracking/Feed Forward/No Rebounds.csv')
 
-train_x, test_x, train_y, test_y = train_test_split(adv_features(),
-                                                    adv_labels(),
-                                                    test_size=0.1)
+        history = model.fit(x=train_x, y=train_y, epochs=10000, callbacks=[early_stop, csv_log], validation_data=(test_x, test_y), shuffle=True)
 
-val_x = adv_features(['2018-19'])
-val_y = adv_labels(['2018-19'])
+        predictions = model.predict(val_x)
 
-print(len(train_x), len(train_y))
-print(len(test_x), len(test_y))
-print(len(val_x), len(val_y))
+        ml_wins = 0
+        spread_wins = 0
+        for pred, actual, betting_odds in zip(predictions, val_y, odds):
+            # Moneyline
+            if pred[0] > pred[1] and actual[0] > actual[1]:
+                ml_wins += 1
+            elif pred[1] > pred[0] and actual[1] > actual[0]:
+                ml_wins += 1
 
-print(train_x[0], train_y[0])
+            # Spread
+            pred_spread = pred[0] - pred[1]  # + away win, - home win
+            actual_spread = actual[0] - actual[1]
+            spread = betting_odds[3]
 
-away_wins = 0
-home_wins = 0
-for game in val_y:
-    if game[0] > game[1]:
-        away_wins += 1
-    else:
-        home_wins += 1
+            # Check for the favorite
+            away_favorite = False
+            if betting_odds[0] < 0:
+                away_favorite = True
 
-model = tf.keras.models.Sequential([
-    tf.keras.layers.Flatten(input_shape=train_x[0].shape),
-    tf.keras.layers.Dense(128, activation=tf.nn.relu),
-    tf.keras.layers.Dropout(0.1),
-    tf.keras.layers.Dense(2)
-])
+            if away_favorite:
+                # Did the away team beat the spread?
+                if actual[0] - actual[1] > spread:
+                    if pred[0] - pred[1] > spread:
+                        spread_wins += 1
+                elif actual[1] > actual[0]:
+                    if pred[1] > pred[0]:
+                        spread_wins += 1
+            # If the home team is the favorite
+            else:
+                if actual[1] - actual[0] > spread:
+                    if pred[1] - pred[0] > spread:
+                        spread_wins += 1
+                elif actual[0] > actual[1]:
+                    if pred[0] > pred[1]:
+                        spread_wins += 1
 
-optimizer = tf.keras.optimizers.RMSprop(0.0001)
-model.compile(loss='mean_squared_error',
-              optimizer=optimizer,
-              metrics=['mean_squared_error', 'mean_absolute_error'])
+        print('Moneyline:', ml_wins, len(predictions), float(ml_wins / len(predictions)))
+        print('Spread:', spread_wins, len(predictions), float(spread_wins / len(predictions)))
+        print(away_wins, home_wins, 'Home%:', float(home_wins / (away_wins + home_wins)))
 
-model.summary()
+        with open('result_tracking/Feed Forward/Advanced Stats/Rtgs TS TOV.csv', 'a', newline='') as f:
+            writer = csv.writer(f)
 
-early_stop = tf.keras.callbacks.EarlyStopping(min_delta=0.01, patience=10, restore_best_weights=True)
-csv_log = tf.keras.callbacks.CSVLogger('result_tracking/Feed Forward/No Rebounds.csv')
-
-history = model.fit(x=train_x, y=train_y, epochs=10000, callbacks=[early_stop, csv_log], validation_data=(test_x, test_y), shuffle=True)
-
-predictions = model.predict(val_x)
-
-wins = 0
-for pred, actual in zip(predictions, val_y):
-    if pred[0] > pred[1] and actual[0] > actual[1]:
-        wins += 1
-    elif pred[1] > pred[0] and actual[1] > actual[0]:
-        wins += 1
-    # print(pred, actual)
-
-print(wins, len(predictions), float(wins / len(predictions)))
-print(away_wins, home_wins, 'Home%:', float(home_wins / (away_wins + home_wins)))
-
-plt.plot(history.history['val_loss'])
-plt.plot(history.history['loss'])
-plt.show()
+            writer.writerow([ml_wins, len(predictions) - ml_wins, float(ml_wins / len(predictions)), '',
+                             spread_wins, len(predictions) - spread_wins, len(predictions), float(spread_wins / len(predictions))])
