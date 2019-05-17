@@ -6,12 +6,13 @@ import csv
 
 odds = odds(['18-19'])  # Get the betting odds for 2018-19 season
 
-network_sizes = []
+network_sizes = [val for val in range(10, 190, 10)]
+file = 'All Data.csv'
 
+print(network_sizes)
 # Test each network size
 for size in network_sizes:
-
-    with open('result_tracking/Feed Forward/Advanced Stats/Rtgs TS TOV Correct.csv', 'a', newline='') as f:
+    with open('result_tracking/Feed Forward/Advanced Stats/' + file, 'a', newline='') as f:
         writer = csv.writer(f)
 
         writer.writerow([])
@@ -101,7 +102,7 @@ for size in network_sizes:
         print('Spread:', spread_wins, len(predictions), float(spread_wins / len(predictions)))
         print(away_wins, home_wins, 'Home%:', float(home_wins / (away_wins + home_wins)))
 
-        with open('result_tracking/Feed Forward/Advanced Stats/Rtgs TS TOV Correct.csv', 'a', newline='') as f:
+        with open('result_tracking/Feed Forward/Advanced Stats/' + file, 'a', newline='') as f:
             writer = csv.writer(f)
 
             writer.writerow([ml_wins, len(predictions) - ml_wins, len(predictions), float(ml_wins / len(predictions)), '', '', '', '',
