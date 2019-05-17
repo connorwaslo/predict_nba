@@ -340,3 +340,51 @@ def adv_labels(years=None):
         labels += adv_labels_part('data/advanced_stats/adv_avg_features_' + year + '.csv')
 
     return np.array(labels)
+
+
+def adv_diff_features_part(data):
+    use_cols = ['GAME_ID', 'AWAY', 'HOME', 'TS%', 'eFG%', '3PAr', 'FTr', 'ORB%', 'DRB%', 'TRB%',
+                             'AST%', 'STL%', 'BLK%', 'TOV%', 'ORtg', 'DRtg', 'POINT_DIFF']
+
+    data = np.array(pd.read_csv(data, header=0, usecols=use_cols)).tolist()
+
+    data.sort(key=lambda x: x[0])  # Sort by GAME_ID
+
+    data = list(map(lambda x: x[1:], data))  #
+
+    # print(np.array(data))
+    return data
+
+
+def adv_diff_features(years):
+    features = []
+    if years is None:
+        years = ['2015-16', '2016-17',
+                 '2017-18']  # '2009-10', '2010-11', '2011-12', '2012-13', '2013-14', '2014-15',
+    for year in years:
+        features += adv_features_part('data/advanced_stats/adv_diff_features_' + year + '.csv')
+
+    return np.array(features)
+
+
+def adv_diff_labels_part(data):
+    use_cols = ['GAME_ID', 'POINT_DIFF']
+
+    data = np.array(pd.read_csv(data, header=0, usecols=use_cols)).tolist()
+
+    data.sort(key=lambda x: x[0])  # Sort by GAME_ID
+
+    data = list(map(lambda x: x[1:], data))  #
+
+    return data
+
+
+def adv_diff_labels(years=None):
+    labels = []
+    if years is None:
+        years = ['2015-16', '2016-17',
+                 '2017-18']  # '2009-10', '2010-11', '2011-12', '2012-13', '2013-14', '2014-15', '2015-16',
+    for year in years:
+        labels += adv_labels_part('data/advanced_stats/adv_diff_features_' + year + '.csv')
+
+    return np.array(labels)
