@@ -22,8 +22,8 @@ for infile, outfile in zip(in_files, out_files):
         for row in reader:
             game = []
             if row_count == 0:
-                game.append(['GAME_ID', 'AWAY', 'HOME', 'TS%', 'eFG%', '3PAr', 'FTr', 'ORB%', 'DRB%', 'TRB%',
-                             'AST%', 'STL%', 'BLK%', 'TOV%', 'ORtg', 'DRtg', 'POINT_DIFF'])
+                game = ['GAME_ID', 'AWAY', 'HOME', 'TS%', 'eFG%', '3PAr', 'FTr', 'ORB%', 'DRB%', 'TRB%',
+                             'AST%', 'STL%', 'BLK%', 'TOV%', 'ORtg', 'DRtg', 'POINT_DIFF']
             else:
                 offset = 15
                 game.append(row[0])
@@ -38,7 +38,7 @@ for infile, outfile in zip(in_files, out_files):
 
             row_count += 1
 
-    with open(outfile, 'w') as f:
+    with open(outfile, 'w', newline='') as f:
         writer = csv.writer(f)
 
         for game in data:

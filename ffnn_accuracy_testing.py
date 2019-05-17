@@ -6,8 +6,8 @@ import csv
 
 odds = odds(['18-19'])  # Get the betting odds for 2018-19 season
 
-network_sizes = [val for val in range(10, 190, 10)]
-file = 'All Data.csv'
+network_sizes = [val for val in range(120, 170, 10)]
+file = 'Removed Corr Features.csv'
 
 print(network_sizes)
 # Test each network size

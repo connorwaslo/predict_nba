@@ -283,13 +283,13 @@ def adv_features_part(data):
 
     # Offense features
     use_cols = ['GAME_ID', 'A_TS%', 'A_eFG%', 'A_3PAr', 'A_FTr', 'A_ORB%', 'A_DRB%',
-                             'A_TRB%', 'A_AST%', 'A_STL%', 'A_BL%', 'A_TOV%', 'A_ORtg', 'A_DRtg',
+                             'A_TRB%', 'A_AST%', 'A_STL%', 'A_BLK%', 'A_TOV%', 'A_ORtg', 'A_DRtg',
                              'H_TS%', 'H_eFG%', 'H_3PAr', 'H_FTr', 'H_ORB%', 'H_DRB%',
-                             'H_TRB%', 'H_AST%', 'H_STL%', 'H_BL%', 'H_TOV%', 'H_ORtg', 'H_DRtg'
+                             'H_TRB%', 'H_AST%', 'H_STL%', 'H_BLK%', 'H_TOV%', 'H_ORtg', 'H_DRtg'
                              ]
 
-    # use_cols = ['GAME_ID', 'A_ORtg', 'A_DRtg', 'A_TS%', 'A_TOV%',
-    #             'H_ORtg', 'H_DRtg', 'H_TS%', 'H_TOV%'
+    # use_cols = ['GAME_ID', 'A_TS%', 'A_DRtg', 'A_ORB%', 'A_DRB%', 'A_TOV%', 'A_AST%', 'A_STL%', 'A_BLK%',
+    #             'H_TS%', 'H_DRtg', 'H_ORB%', 'H_DRB%', 'H_TOV%', 'H_AST%', 'H_STL%', 'H_BLK%'
     #             ]
 
     # Important features
