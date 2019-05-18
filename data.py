@@ -311,7 +311,7 @@ def adv_features_part(data):
 def adv_features(years=None):
     features = []
     if years is None:
-        years = ['2015-16', '2016-17',
+        years = ['2009-10', '2010-11', '2011-12', '2012-13', '2013-14', '2014-15', '2015-16', '2016-17',
                  '2017-18']  # '2009-10', '2010-11', '2011-12', '2012-13', '2013-14', '2014-15',
     for year in years:
         features += adv_features_part('data/advanced_stats/adv_avg_features_' + year + '.csv')
@@ -334,7 +334,7 @@ def adv_labels_part(data):
 def adv_labels(years=None):
     labels = []
     if years is None:
-        years = ['2015-16', '2016-17',
+        years = ['2009-10', '2010-11', '2011-12', '2012-13', '2013-14', '2014-15', '2015-16', '2016-17',
                  '2017-18']  # '2009-10', '2010-11', '2011-12', '2012-13', '2013-14', '2014-15', '2015-16',
     for year in years:
         labels += adv_labels_part('data/advanced_stats/adv_avg_features_' + year + '.csv')
@@ -343,8 +343,10 @@ def adv_labels(years=None):
 
 
 def adv_diff_features_part(data):
-    use_cols = ['GAME_ID', 'AWAY', 'HOME', 'TS%', 'eFG%', '3PAr', 'FTr', 'ORB%', 'DRB%', 'TRB%',
-                             'AST%', 'STL%', 'BLK%', 'TOV%', 'ORtg', 'DRtg', 'POINT_DIFF']
+    use_cols = ['GAME_ID', 'TS%', 'eFG%', '3PAr', 'FTr', 'ORB%', 'DRB%', 'TRB%',
+                             'AST%', 'STL%', 'BLK%', 'TOV%', 'ORtg', 'DRtg']
+    # use_cols = ['GAME_ID', 'TS%', '3PAr', 'FTr', 'ORB%', 'DRB%',
+    #             'AST%', 'STL%', 'BLK%', 'TOV%', 'DRtg']
 
     data = np.array(pd.read_csv(data, header=0, usecols=use_cols)).tolist()
 
@@ -357,12 +359,13 @@ def adv_diff_features_part(data):
 
 
 def adv_diff_features(years):
+    print('Called features()')
     features = []
     if years is None:
-        years = ['2015-16', '2016-17',
+        years = ['2009-10', '2010-11', '2011-12', '2012-13', '2013-14', '2014-15', '2015-16', '2016-17',
                  '2017-18']  # '2009-10', '2010-11', '2011-12', '2012-13', '2013-14', '2014-15',
     for year in years:
-        features += adv_features_part('data/advanced_stats/adv_diff_features_' + year + '.csv')
+        features += adv_diff_features_part('data/advanced_stats/adv_diff_features_' + year + '.csv')
 
     return np.array(features)
 
@@ -380,11 +383,12 @@ def adv_diff_labels_part(data):
 
 
 def adv_diff_labels(years=None):
+    print('Called labels()')
     labels = []
     if years is None:
-        years = ['2015-16', '2016-17',
+        years = ['2009-10', '2010-11', '2011-12', '2012-13', '2013-14', '2014-15', '2015-16', '2016-17',
                  '2017-18']  # '2009-10', '2010-11', '2011-12', '2012-13', '2013-14', '2014-15', '2015-16',
     for year in years:
-        labels += adv_labels_part('data/advanced_stats/adv_diff_features_' + year + '.csv')
+        labels += adv_diff_labels_part('data/advanced_stats/adv_diff_features_' + year + '.csv')
 
     return np.array(labels)

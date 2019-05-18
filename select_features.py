@@ -1,20 +1,22 @@
 from feature_selector import FeatureSelector
-from data import adv_features, adv_labels
+from data import adv_diff_features, adv_diff_labels
 from sklearn.feature_selection import SelectKBest, chi2
 import pandas as pd
 import numpy as np
 
-columns = ['A_TS%', 'A_eFG%', 'A_3PAr', 'A_FTr', 'A_ORB%', 'A_DRB%',
-                             'A_TRB%', 'A_AST%', 'A_STL%', 'A_BLK%', 'A_TOV%', 'A_ORtg', 'A_DRtg',
-                             'H_TS%', 'H_eFG%', 'H_3PAr', 'H_FTr', 'H_ORB%', 'H_DRB%',
-                             'H_TRB%', 'H_AST%', 'H_STL%', 'H_BLK%', 'H_TOV%', 'H_ORtg', 'H_DRtg'
-                             ]
+# columns = ['A_TS%', 'A_eFG%', 'A_3PAr', 'A_FTr', 'A_ORB%', 'A_DRB%',
+#                              'A_TRB%', 'A_AST%', 'A_STL%', 'A_BLK%', 'A_TOV%', 'A_ORtg', 'A_DRtg',
+#                              'H_TS%', 'H_eFG%', 'H_3PAr', 'H_FTr', 'H_ORB%', 'H_DRB%',
+#                              'H_TRB%', 'H_AST%', 'H_STL%', 'H_BLK%', 'H_TOV%', 'H_ORtg', 'H_DRtg'
+#                              ]
+columns = ['TS%', 'eFG%', '3PAr', 'FTr', 'ORB%', 'DRB%', 'TRB%',
+                             'AST%', 'STL%', 'BLK%', 'TOV%', 'ORtg', 'DRtg']
 
-features = pd.DataFrame(adv_features())
-labels = pd.DataFrame(adv_labels())
+features = pd.DataFrame(adv_diff_features(None))
+labels = pd.DataFrame(adv_diff_labels())
 
 features.columns = columns
-labels.columns = ['AWAY_POINTS', 'HOME_POINTS']
+labels.columns = ['POINT_DIFF']
 
 print(len(features), len(labels))
 
