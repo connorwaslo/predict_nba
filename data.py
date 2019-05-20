@@ -31,6 +31,7 @@ def odds(years=None):
     return odds
 
 
+
 def labels(file='data/game_stats_2017-18.csv'):
     use_cols = ['GAME_ID', 'A_PTS', 'H_PTS']
 
@@ -38,19 +39,6 @@ def labels(file='data/game_stats_2017-18.csv'):
 
     data = data.values.tolist()
     # data.sort(key=lambda x: x[0])
-    data = list(map(lambda x: x[1:], data))
-
-    return data
-
-
-def classifier_labels():
-    file = 'data/game_stats.csv'
-    use_cols = ['GAME_ID', 'WINNER']
-
-    data = pd.read_csv(file, header=0, usecols=use_cols)
-
-    data = data.values.tolist()
-    data.sort(key=lambda x: x[0])
     data = list(map(lambda x: x[1:], data))
 
     return data
@@ -166,7 +154,6 @@ def load_games(file='data/game_stats_2017-18.csv'):
     return data
 
 
-# Todo: Create each game as two channels. One for home team another for the away team.
 def features(game_file='data/game_stats_2017-18.csv', player_file='data/player_avgs_2017-18.csv'):
     all_games = raw_features(game_file, player_file)
     full_list = []
@@ -246,34 +233,6 @@ def game_avg_labels():
         labels += game_avg_labels_part('data/game_avgs_' + year + '.csv')
 
     return labels
-
-
-def features_2016_19():
-    a = features('data/game_stats_2016-17.csv', 'data/player_avgs_2016-17.csv')
-    print('Features 1/3')
-    b = features('data/game_stats_2017-18.csv', 'data/player_avgs_2017-18.csv')
-    print('Features 2/3')
-    c = features('data/game_stats.csv', 'data/player_avgs.csv')
-    print('Features 3/3')
-    return a + b + c
-
-
-def labels_2016_19():
-    a = labels('data/game_stats_2016-17.csv')
-    print('Labels 1/3')
-    b = labels('data/game_stats_2017-18.csv')
-    print('Labels 2/3')
-    c = labels('data/game_stats.csv')
-    print('Labels 3/3')
-    return a + b + c
-
-
-def test_features():
-    return features(game_file='data/game_stats.csv', player_file='data/player_avgs.csv')
-
-
-def test_labels():
-    return labels(file='data/game_stats.csv')
 
 
 def adv_features_part(data):
@@ -392,3 +351,59 @@ def adv_diff_labels(years=None):
         labels += adv_diff_labels_part('data/advanced_stats/adv_diff_features_' + year + '.csv')
 
     return np.array(labels)
+
+
+def classifier_data(years=['2009-10', '2010-11', '2011-12', '2012-13', '2013-14', '2014-15', '2015-16', '2016-17',
+                 '2017-18']):
+    columns = ['TS%', 'eFG%', '3PAr', 'FTr', 'ORB%', 'DRB%', 'TRB%',
+                             'AST%', 'STL%', 'BLK%', 'TOV%', 'ORtg', 'DRtg']
+    all_features = pd.DataFrame(adv_diff_features(years))
+    all_features.columns = columns
+
+    all_labels = pd.DataFrame(adv_diff_labels(years))
+    all_labels.columns = ['POINT_DIFF']
+
+    # Convert labels to binary classes
+    all_labels.loc[all_labels.POINT_DIFF > 0] = 0
+    all_labels.loc[all_labels.POINT_DIFF < 0] = 1
+    # print(all_labels)
+
+    all_features['WINNER'] = all_labels['POINT_DIFF']
+
+    away_winners = pd.DataFrame(all_features.loc[all_features.WINNER == 0])
+    home_winners = pd.DataFrame(all_features.loc[all_features.WINNER == 1])
+
+    away_winners['HOME'] = 0
+    away_winners['WINNER'] = 1
+    away_winners.rename(columns={'WINNER': 'AWAY'}, inplace=True)
+
+    home_winners['AWAY'] = 0
+    home_winners['WINNER'] = 1
+    home_winners.rename(columns={'WINNER': 'HOME'}, inplace=True)
+    # print(home_winners)
+
+    remove_count = len(home_winners) - len(away_winners)
+    # print(remove_count)
+
+    # Randomly remove rows in home_winners in order to undersample and even out the classes
+    np.random.seed(10)
+    drop_games = np.random.choice(home_winners.index, remove_count, replace=False)
+    home_winners = home_winners.drop(drop_games)
+    # print(home_winners)
+
+    pd.set_option('display.max_columns', 15)
+    features = pd.concat([away_winners, home_winners], axis=0)
+    # print(features)
+
+    # print('Post popped features')
+    away = np.array(features.pop('AWAY'))
+    # print(away)
+    home = np.array(features.pop('HOME'))
+    # print(home)
+    labels = pd.DataFrame()
+    labels['AWAY'] = away
+    labels['HOME'] = home
+    # print(features)
+    # print(labels)
+
+    return features, labels

@@ -1,14 +1,16 @@
 import tensorflow as tf
 from sklearn.model_selection import train_test_split
-from data import adv_diff_features, adv_diff_labels, odds
+from sklearn.utils import shuffle
+from data import adv_diff_features, adv_diff_labels, odds, classifier_data
+import numpy as np
 import csv
 
 
 odds = odds(['18-19'])  # Get the betting odds for 2018-19 season
 
-network_sizes = [val for val in range(10, 210, 10)]
+network_sizes = [val for val in range(10, 110, 10)]
 # network_sizes = [10]
-file = 'Diff - Removed Corr Features - All Years.csv'
+file = 'Classifier - Diff - All Years.csv'
 
 WRITE_RESULTS = True
 
@@ -24,12 +26,23 @@ for size in network_sizes:
 
     # Run the network 10 times to calculate an average from that
     for runs in range(5):
-        train_x, test_x, train_y, test_y = train_test_split(adv_diff_features(None),
-                                                            adv_diff_labels(),
-                                                            test_size=0.1)
+        features, labels = classifier_data()
 
-        val_x = adv_diff_features(['2018-19'])
-        val_y = adv_diff_labels(['2018-19'])
+        features = np.array(features)
+        labels = np.array(labels)
+
+        train_x, test_x, train_y, test_y = train_test_split(features,
+                                                            labels,
+                                                            test_size=0.1,
+                                                            shuffle=True)
+
+        # val_x = adv_diff_features(['2018-19'])
+        # val_y = adv_diff_labels(['2018-19'])
+
+        val_x, val_y = classifier_data(['2018-19'])
+        print(val_x.shape, val_y.shape)
+        val_x = np.array(shuffle(val_x))
+        val_y = np.array(shuffle(val_y))
 
         print(len(train_x), len(train_y))
         print(len(test_x), len(test_y))
@@ -40,26 +53,34 @@ for size in network_sizes:
         away_wins = 0
         home_wins = 0
         for game in val_y:
-            if game > 0:
+            if game[0] == 1:
                 away_wins += 1
             else:
                 home_wins += 1
 
         model = tf.keras.models.Sequential([
             tf.keras.layers.Flatten(input_shape=train_x[0].shape),
-            tf.keras.layers.Dense(size, activation=tf.nn.relu),
+            tf.keras.layers.Dense(120, activation=tf.nn.relu),
+            tf.keras.layers.Dense(120, activation=tf.nn.relu),
+            tf.keras.layers.Dense(120, activation=tf.nn.relu),
+            tf.keras.layers.Dense(120, activation=tf.nn.relu),
+            tf.keras.layers.Dense(120, activation=tf.nn.relu),
+            tf.keras.layers.Dense(120, activation=tf.nn.relu),
+            tf.keras.layers.Dense(120, activation=tf.nn.relu),
+            tf.keras.layers.Dense(120, activation=tf.nn.relu),
+            tf.keras.layers.Dense(120, activation=tf.nn.relu),
             tf.keras.layers.Dropout(0.1),
-            tf.keras.layers.Dense(1)
+            tf.keras.layers.Dense(2, tf.nn.softmax)
         ])
 
         optimizer = tf.keras.optimizers.RMSprop(0.0001)
-        model.compile(loss='mean_squared_error',
-                      optimizer=optimizer,
-                      metrics=['mean_squared_error', 'mean_absolute_error'])
+        model.compile(loss='binary_crossentropy',
+                      optimizer='adam',
+                      metrics=['binary_crossentropy', 'mean_squared_error', 'mean_absolute_error'])
 
         model.summary()
 
-        early_stop = tf.keras.callbacks.EarlyStopping(min_delta=0.01, patience=10, restore_best_weights=True)
+        early_stop = tf.keras.callbacks.EarlyStopping(min_delta=0.001, patience=10, restore_best_weights=True)
         csv_log = tf.keras.callbacks.CSVLogger('result_tracking/Feed Forward/No Rebounds.csv')
 
         history = model.fit(x=train_x, y=train_y, epochs=10000, callbacks=[early_stop, csv_log], validation_data=(test_x, test_y), shuffle=True)
@@ -69,12 +90,18 @@ for size in network_sizes:
         ml_wins = 0
         spread_wins = 0
         for pred, actual, betting_odds in zip(predictions, val_y, odds):
-            print('Pred:', pred, ' | ', actual)
-
+            print(pred, actual)
             # Moneyline
-            if pred > 0 and actual > 0:
+
+            # pred_val = int(pred[0] + 0.5)
+            # print('Pred:', pred_val, actual)
+            # if pred_val == int(actual):
+            #     print(pred, actual)
+            #     ml_wins += 1
+
+            if pred[0] > 0.5 and actual[0] > 0.5:
                 ml_wins += 1
-            elif pred < 0 and actual < 0:
+            elif pred[1] > 0.5 and actual[1] > 0.5:
                 ml_wins += 1
 
             # Todo: Implement spread accuracy checking with diff features
