@@ -12,7 +12,7 @@ val_y = adv_diff_labels(['2018-19'])
 
 model = tf.keras.models.Sequential([
     tf.keras.layers.Flatten(input_shape=train_x[0].shape),
-    tf.keras.layers.Dense(10, activation=tf.nn.relu),
+    tf.keras.layers.Dense(160, activation=tf.nn.relu),
     tf.keras.layers.Dropout(0.1),
     tf.keras.layers.Dense(1)
 ])
@@ -42,7 +42,6 @@ sp_profit = 0
 total_spread_bet = 0
 
 for pred, actual, betting_odds in zip(predictions, val_y, odds):
-    total_bet += 10
     # Calc spread profits
     if betting_odds[2] != 'pk' and betting_odds != '':
         spread = abs(float(betting_odds[2]))
@@ -91,20 +90,66 @@ for pred, actual, betting_odds in zip(predictions, val_y, odds):
 
     # If the away team wins by prediction and in reality
     if pred > 0 and actual > 0:
-        profit = moneyline_profit(bet_size=BET_SIZE, pred_winner=0, away_ml=betting_odds[0], home_ml=betting_odds[1])
-        ml_profit += profit
+        # Only bet on game if their lines is better than -300
+        if betting_odds[0] >= 0:
+            if abs(pred) <= 5:
+                profit = moneyline_profit(bet_size=BET_SIZE, pred_winner=0, away_ml=betting_odds[0], home_ml=betting_odds[1])
+            elif abs(pred) <= 10:
+                profit = moneyline_profit(bet_size=2*BET_SIZE, pred_winner=0, away_ml=betting_odds[0], home_ml=betting_odds[1])
+            else:
+                profit = moneyline_profit(bet_size=3*BET_SIZE, pred_winner=0, away_ml=betting_odds[0], home_ml=betting_odds[1])
+            ml_profit += profit
+            print('Away Win', profit, ' Total:', ml_profit, ' | Odds:', betting_odds[0])
+
         wins += 1
-        print('Win', profit, ' Total:', ml_profit, ' | Odds:', betting_odds[0])
 
     # If the home team wins by prediction and in reality
     elif pred < 0 and actual < 0:
-        profit = moneyline_profit(bet_size=BET_SIZE, pred_winner=1, away_ml=betting_odds[0], home_ml=betting_odds[1])
-        ml_profit += profit
-        print('Win', profit, ' Total:', ml_profit, ' | Odds:', betting_odds[1])
+        # Only bet on game if their lines is better than -300
+        if betting_odds[1] >= 0:
+            if abs(pred) <= 5:
+                total_bet += BET_SIZE
+                profit = moneyline_profit(bet_size=BET_SIZE, pred_winner=1, away_ml=betting_odds[0], home_ml=betting_odds[1])
+            elif abs(pred) <= 10:
+                total_bet += 2 * BET_SIZE
+                profit = moneyline_profit(bet_size=2*BET_SIZE, pred_winner=1, away_ml=betting_odds[0], home_ml=betting_odds[1])
+            else:
+                total_bet += 3 * BET_SIZE
+                profit = moneyline_profit(bet_size=3*BET_SIZE, pred_winner=1, away_ml=betting_odds[0], home_ml=betting_odds[1])
+            # profit = moneyline_profit(bet_size=BET_SIZE, pred_winner=1, away_ml=betting_odds[0], home_ml=betting_odds[1])
+            ml_profit += profit
+            print('Home Win', profit, ' Total:', ml_profit, ' | Odds:', betting_odds[1])
+
         wins += 1
     else:
-        ml_profit -= BET_SIZE
-        print('Loss, subtracting monies', ml_profit)
+        if pred > 0 and actual < 0:
+            if betting_odds[0] > 0:
+                if abs(pred) <= 5:
+                    loss = BET_SIZE
+                    total_bet += BET_SIZE
+                elif abs(pred) <= 10:
+                    loss = 2 * BET_SIZE
+                    total_bet += 2 * BET_SIZE
+                else:
+                    total_bet += 3 * BET_SIZE
+                    loss = 3 * BET_SIZE
+
+                ml_profit -= loss
+                print('Loss, subtracting', ml_profit)
+        elif pred < 0 and actual > 0:
+            if betting_odds[1] > 0:
+                if abs(pred) <= 5:
+                    loss = BET_SIZE
+                    total_bet += BET_SIZE
+                elif abs(pred) <= 10:
+                    loss = 2 * BET_SIZE
+                    total_bet += 2 * BET_SIZE
+                else:
+                    total_bet += 3 * BET_SIZE
+                    loss = 3 * BET_SIZE
+
+                ml_profit -= loss
+                print('Loss, subtracting', ml_profit)
 
     totals.append(ml_profit)
 

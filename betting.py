@@ -13,21 +13,22 @@ def spread_profit(bet_size=10):
 
 
 def moneyline_profit(bet_size=10, pred_winner=1, away_ml=100, home_ml=-100):
+    print('Bet:', bet_size)
     if pred_winner == 0:  # If the away team wins
         # Calculate away ml profit
         if away_ml < 0:  # If the favorite
-            print('Multiplier:', abs(100.0 / away_ml))
+            print('Line:', away_ml, 'Multiplier:', abs(100.0 / away_ml))
             return bet_size * abs(100.0 / away_ml)
         else:  # If the underdog
-            print('Multiplier:', abs(away_ml / 100.0))
+            print('Line:', away_ml, 'Multiplier:', abs(away_ml / 100.0))
             return bet_size * abs(away_ml / 100.0)
     else:
         # Calculate home ml profit
         if home_ml < 0:  # If the favorite
-            print('Multiplier:', abs(100.0 / home_ml))
+            print('Line:', home_ml, 'Multiplier:', abs(100.0 / home_ml))
             return bet_size * abs(100.0 / home_ml)
         else:  # If the underdog
-            print('Multiplier:', abs(home_ml / 100.0))
+            print('Line:', home_ml, 'Multiplier:', abs(home_ml / 100.0))
             return bet_size * abs(home_ml / 100.0)
 
 
