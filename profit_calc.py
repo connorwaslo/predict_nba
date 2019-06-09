@@ -50,7 +50,7 @@ twins3 = 0
 wins4 = 0
 twins4 = 0
 
-min_line = -250
+# min_line = -250
 
 for pred, actual, betting_odds in zip(predictions, val_y, odds):
     # Calc spread profits
@@ -99,19 +99,20 @@ for pred, actual, betting_odds in zip(predictions, val_y, odds):
                 sp_profit -= 10
         total_spread_bet += 10
 
+    total_bet += BET_SIZE
     # Todo: test accuracy in each score region to determine which is actually most confident
     # If the away team wins by prediction and in reality
     if pred > 0 and actual > 0:
         # Only bet on game if their lines is better than -300
-        if betting_odds[0] >= min_line:
+        # if betting_odds[0] >= min_line:
             # if abs(pred) <= 5:
             #     wins1 += 1
             #     twins1 += 1
             #     profit = moneyline_profit(bet_size=BET_SIZE, pred_winner=0, away_ml=betting_odds[0], home_ml=betting_odds[1])
-            if 6 <= abs(pred) <= 10:
-                wins2 += 1
-                twins2 += 1
-                profit = moneyline_profit(bet_size=2*BET_SIZE, pred_winner=0, away_ml=betting_odds[0], home_ml=betting_odds[1])
+        # if 6 <= abs(pred) <= 10:
+        #     wins2 += 1
+        #     twins2 += 1
+        #     profit = moneyline_profit(bet_size=2 * BET_SIZE, pred_winner=0, away_ml=betting_odds[0], home_ml=betting_odds[1])
             # elif abs(pred) <= 15:
             #     wins3 += 1
             #     twins3 += 1
@@ -120,25 +121,26 @@ for pred, actual, betting_odds in zip(predictions, val_y, odds):
             #     wins4 += 1
             #     twins4 += 1
             #     profit = moneyline_profit(bet_size=4*BET_SIZE, pred_winner=0, away_ml=betting_odds[0], home_ml=betting_odds[1])
-                ml_profit += profit
-                print('Away Win', profit, ' Total:', ml_profit, ' | Odds:', betting_odds[0])
+        profit = moneyline_profit(bet_size=BET_SIZE, pred_winner=0, away_ml=betting_odds[0], home_ml=betting_odds[1])
+        ml_profit += profit
+        print('Away Win', profit, ' Total:', ml_profit, ' | Odds:', betting_odds[0])
 
         wins += 1
 
     # If the home team wins by prediction and in reality
     elif pred < 0 and actual < 0:
         # Only bet on game if their lines is better than -300
-        if betting_odds[1] >= min_line:
+        # if betting_odds[1] >= min_line:
             # if abs(pred) <= 5:
             #     wins1 += 1
             #     twins1 += 1
             #     total_bet += BET_SIZE
             #     profit = moneyline_profit(bet_size=BET_SIZE, pred_winner=1, away_ml=betting_odds[0], home_ml=betting_odds[1])
-            if 6 <= abs(pred) <= 10:
-                wins2 += 1
-                twins2 += 1
-                total_bet += 2 * BET_SIZE
-                profit = moneyline_profit(bet_size=2*BET_SIZE, pred_winner=1, away_ml=betting_odds[0], home_ml=betting_odds[1])
+        # if 6 <= abs(pred) <= 10:
+        #     wins2 += 1
+        #     twins2 += 1
+        #     total_bet += 2 * BET_SIZE
+        #     profit = moneyline_profit(bet_size=2 * BET_SIZE, pred_winner=1, away_ml=betting_odds[0], home_ml=betting_odds[1])
             # elif abs(pred) <= 15:
             #     wins3 += 1
             #     twins3 += 1
@@ -149,21 +151,22 @@ for pred, actual, betting_odds in zip(predictions, val_y, odds):
             #     total_bet += 3 * BET_SIZE
             #     profit = moneyline_profit(bet_size=4*BET_SIZE, pred_winner=1, away_ml=betting_odds[0], home_ml=betting_odds[1])
             # profit = moneyline_profit(bet_size=BET_SIZE, pred_winner=1, away_ml=betting_odds[0], home_ml=betting_odds[1])
-                ml_profit += profit
-                print('Home Win', profit, ' Total:', ml_profit, ' | Odds:', betting_odds[1])
+        profit = moneyline_profit(bet_size=BET_SIZE, pred_winner=1, away_ml=betting_odds[0], home_ml=betting_odds[1])
+        ml_profit += profit
+        print('Home Win', profit, ' Total:', ml_profit, ' | Odds:', betting_odds[1])
 
         wins += 1
     else:
         if pred > 0 and actual < 0:
-            if betting_odds[0] > min_line:
-                # if abs(pred) <= 5:
-                #     twins1 += 1
-                #     loss = BET_SIZE
-                #     total_bet += BET_SIZE
-                if 6 <= abs(pred) <= 10:
-                    twins2 += 1
-                    loss = 2 * BET_SIZE
-                    total_bet += 2 * BET_SIZE
+            # if betting_odds[0] > min_line:
+            # if abs(pred) <= 5:
+            #     twins1 += 1
+            #     loss = BET_SIZE
+            #     total_bet += BET_SIZE
+            # if 6 <= abs(pred) <= 10:
+            #     twins2 += 1
+            #     loss = 2 * BET_SIZE
+            #     total_bet += 2 * BET_SIZE
                 # elif abs(pred) <= 15:
                 #     twins3 += 1
                 #     loss = 3 * BET_SIZE
@@ -173,18 +176,20 @@ for pred, actual, betting_odds in zip(predictions, val_y, odds):
                 #     total_bet += 4 * BET_SIZE
                 #     loss = 4 * BET_SIZE
 
-                    ml_profit -= loss
-                    print('Loss, subtracting', ml_profit)
+            loss = BET_SIZE
+
+            ml_profit -= loss
+            print('Loss, subtracting', ml_profit)
         elif pred < 0 and actual > 0:
-            if betting_odds[1] > min_line:
+            # if betting_odds[1] > min_line:
                 # if abs(pred) <= 5:
                 #     twins1 += 1
                 #     loss = BET_SIZE
                 #     total_bet += BET_SIZE
-                if 6 <= abs(pred) <= 10:
-                    twins2 += 1
-                    loss = 2 * BET_SIZE
-                    total_bet += 2 * BET_SIZE
+            # if 6 <= abs(pred) <= 10:
+            #     twins2 += 1
+            #     loss = 2 * BET_SIZE
+            #     total_bet += 2 * BET_SIZE
                 # elif abs(pred) <= 15:
                 #     twins3 += 1
                 #     loss = 3 * BET_SIZE
@@ -193,9 +198,10 @@ for pred, actual, betting_odds in zip(predictions, val_y, odds):
                 #     twins4 += 1
                 #     total_bet += 4 * BET_SIZE
                 #     loss = 4 * BET_SIZE
+            loss = BET_SIZE
 
-                    ml_profit -= loss
-                    print('Loss, subtracting', ml_profit)
+            ml_profit -= loss
+            print('Loss, subtracting', ml_profit)
 
     totals.append(ml_profit)
 
@@ -206,7 +212,7 @@ print('Spread Wins:', sp_wins, ' / ', int(total_spread_bet / 10))
 print('ROI:', float(ml_profit / total_bet))
 
 # print('Wins1:', wins1, twins1, float(wins1 / twins1))
-print('Wins2:', wins2, twins2, float(wins2 / twins2))
+# print('Wins2:', wins2, twins2, float(wins2 / twins2))
 # print('Wins3:', wins3, twins3, float(wins3 / twins3))
 # print('Wins4:', wins4, twins4, float(wins4 / twins4))
 
