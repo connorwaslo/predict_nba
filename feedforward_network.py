@@ -9,7 +9,6 @@ def loss(y_true, y_pred):
     return abs(y_true - y_pred)
 
 
-# Todo: Play around with this loss function
 def norm_mean_square_error(y_true, y_pred):
     mse = ((y_true - y_pred) ** 2).mean()
     return mse / (max(y_true) - min(y_true))

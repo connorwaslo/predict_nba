@@ -2,6 +2,10 @@
 
 I used a feedforward neural network and statistics from the past decade to predict the outcome of regular season nba games.
 
+Relevant files: profit_calc.py  |  betting.py
+
+Dependencies can be found in requirements.txt
+
 ## Data
 
 I scraped individual player statistics, basic team stats, and advanced team stats for use in prediction.
