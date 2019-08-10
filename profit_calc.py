@@ -35,6 +35,27 @@ history = model.fit(x=train_x, y=train_y, epochs=10000, callbacks=[early_stop, c
 
 predictions = model.predict(val_x)
 
+"""
+Here's where we get into the nitty-gritty logic for figuring out profit for both moneyline and spread
+
+Spoiler: This algorithm is awful at predicting the spread correctly -- there are just too many moving
+parts for that to work well
+
+On paper moneyline should look fantastic... but Vegas is really good at creating the lines which means
+one loss can cancel out the earnings for 5 wins. Unfortunate. This tells me I need to find a way to get
+better at predicting underdog wins. This strategy is still less profitable than straight up betting on the
+Vegas favorite, but you lose money both ways.
+
+The question may be is it better to get better at predicting all games or figure out which games are
+better to bet on...
+
+While there's obviously room for improvement here, it's be interesting and I'll continue to touch back
+on this as I learn more about data science.
+"""
+
+# True to show profits/losses for each individual game, False to ignore them and just see final results
+PRINT_INDIV_RESULTS = True
+
 BET_SIZE = 10
 ml_profit = 0
 total_bet = 0
@@ -45,16 +66,22 @@ sp_wins = 0
 sp_profit = 0
 total_spread_bet = 0
 
-wins1 = 0
-twins1 = 0
-wins2 = 0
-twins2 = 0
-wins3 = 0
-twins3 = 0
-wins4 = 0
-twins4 = 0
+fav_wins = 0
+fav_betting = 0
+for actual, betting_odds in zip(val_y, odds):
+    if betting_odds[0] < 0 and actual > 0:
+        profit = moneyline_profit(bet_size=BET_SIZE, pred_winner=0, away_ml=betting_odds[0], home_ml=betting_odds[1])
+        fav_betting += profit
+        fav_wins += 1
+    elif betting_odds[1] < 0 and actual < 0:
+        profit = moneyline_profit(bet_size=BET_SIZE, pred_winner=1, away_ml=betting_odds[0], home_ml=betting_odds[1])
+        fav_betting += profit
+        fav_wins += 1
+    else:
+        fav_betting -= BET_SIZE
 
-# min_line = -250
+
+print('Fav wins:', fav_wins, len(val_y), float(fav_wins / len(val_y)), '|', fav_betting, int(BET_SIZE * len(val_y)))
 
 for pred, actual, betting_odds in zip(predictions, val_y, odds):
     # Calc spread profits
@@ -105,12 +132,14 @@ for pred, actual, betting_odds in zip(predictions, val_y, odds):
         total_spread_bet += 10
 
     total_bet += BET_SIZE
-    # Todo: test accuracy in each score region to determine which is actually most confident
+
     # If the away team wins by prediction and in reality
     if pred > 0 and actual > 0:
         profit = moneyline_profit(bet_size=BET_SIZE, pred_winner=0, away_ml=betting_odds[0], home_ml=betting_odds[1])
         ml_profit += profit
-        print('Away Win', profit, ' Total:', ml_profit, ' | Odds:', betting_odds[0])
+
+        if PRINT_INDIV_RESULTS:
+            print('Away Win', profit, ' Total:', ml_profit, ' | Odds:', betting_odds[0])
 
         wins += 1
 
@@ -118,7 +147,9 @@ for pred, actual, betting_odds in zip(predictions, val_y, odds):
     elif pred < 0 and actual < 0:
         profit = moneyline_profit(bet_size=BET_SIZE, pred_winner=1, away_ml=betting_odds[0], home_ml=betting_odds[1])
         ml_profit += profit
-        print('Home Win', profit, ' Total:', ml_profit, ' | Odds:', betting_odds[1])
+
+        if PRINT_INDIV_RESULTS:
+            print('Home Win', profit, ' Total:', ml_profit, ' | Odds:', betting_odds[1])
 
         wins += 1
     else:
@@ -126,25 +157,23 @@ for pred, actual, betting_odds in zip(predictions, val_y, odds):
             loss = BET_SIZE
 
             ml_profit -= loss
-            print('Loss, subtracting', ml_profit)
+            if PRINT_INDIV_RESULTS:
+                print('Loss, subtracting', ml_profit)
         elif pred < 0 and actual > 0:
             loss = BET_SIZE
 
             ml_profit -= loss
-            print('Loss, subtracting', ml_profit)
+            if PRINT_INDIV_RESULTS:
+                print('Loss, subtracting', ml_profit)
 
     totals.append(ml_profit)
 
-print(wins, len(predictions), float(wins / len(predictions)))
+print('Wins', wins)
+print('Total Games', len(predictions), '|', float(wins / len(predictions)))
 print('ML Profit:', ml_profit, ' / ', total_bet)
 print('Spread Profit:', sp_profit, ' / ', total_spread_bet)
 print('Spread Wins:', sp_wins, ' / ', int(total_spread_bet / 10))
 print('ROI:', float(ml_profit / total_bet))
-
-# print('Wins1:', wins1, twins1, float(wins1 / twins1))
-# print('Wins2:', wins2, twins2, float(wins2 / twins2))
-# print('Wins3:', wins3, twins3, float(wins3 / twins3))
-# print('Wins4:', wins4, twins4, float(wins4 / twins4))
 
 plt.plot(totals)
 plt.show()
